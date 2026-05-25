@@ -1,0 +1,265 @@
+{% extends 'admin/layout.html' %}
+
+{% block title %}Pre-Processing | Admin TrendReco{% endblock %}
+{% block page_title %}Data Cleaning Pipeline{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<div class="max-w-[98%] mx-auto space-y-8 animate-in fade-in duration-700">
+
+    <!-- ================= FILTER BAR (TAMBAHAN) ================= -->
+    <div class="flex gap-3 px-2">
+        <a href="?dataset=all" class="px-4 py-2 bg-slate-800 text-white rounded-xl text-xs">All</a>
+        <a href="?dataset=sosmed" class="px-4 py-2 bg-indigo-500 text-white rounded-xl text-xs">Social Media</a>
+        <a href="?dataset=trend" class="px-4 py-2 bg-orange-500 text-white rounded-xl text-xs">Google Trends</a>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div class="lg:col-span-8 bg-slate-900 rounded-[2.5rem] p-8 shadow-2xl shadow-slate-900/20 relative overflow-hidden group">
+            <div class="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 rounded-full -mr-32 -mt-32 blur-3xl group-hover:bg-indigo-500/20 transition-colors"></div>
+            <div class="relative flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+
+                <div class="space-y-4">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 bg-indigo-500/10 border border-indigo-500/20 rounded-full">
+                        <span class="relative flex h-2 w-2">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
+                        </span>
+                        <span class="text-[10px] font-black text-indigo-300 uppercase tracking-widest">NLP Engine Active</span>
+                    </div>
+
+                    <div>
+                        <h3 class="text-3xl font-black text-white tracking-tighter">Pipeline Configuration</h3>
+                        <p class="text-slate-400 text-sm font-medium mt-1">Transformasi raw data menjadi token berkualitas tinggi.</p>
+                    </div>
+                </div>
+
+                <button onclick="startPreprocessing()" id="btn-process"
+                    class="w-full md:w-auto relative group overflow-hidden px-10 py-5 bg-white text-slate-900 rounded-[1.5rem] text-xs font-black uppercase tracking-[0.2em] transition-all hover:scale-105 active:scale-95 shadow-xl shadow-white/5">
+                    <span class="relative z-10 flex items-center justify-center gap-3">
+                        <i class="fa-solid fa-play"></i> <span id="btn-text">Run Pipeline</span>
+                    </span>
+                </button>
+
+            </div>
+        </div>
+
+        <!-- PANEL STATUS TETAP -->
+        <div class="lg:col-span-4 bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-xl shadow-slate-200/50 flex flex-col justify-between relative overflow-hidden">
+            <div class="relative z-10">
+                <div class="flex justify-between items-start">
+                    <div class="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-800 shadow-inner">
+                        <i class="fa-solid fa-database text-lg"></i>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">Process Load</p>
+                        <h4 id="status-text" class="text-xl font-black text-slate-800 mt-1">Standby</h4>
+                    </div>
+                </div>
+
+                <div class="mt-8">
+                    <div class="flex justify-between items-end mb-2">
+                        <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Pipeline Integrity</span>
+                        <span id="progress-percent" class="text-xs font-black text-indigo-600">0%</span>
+                    </div>
+
+                    <div class="h-3 w-full bg-slate-100 rounded-full overflow-hidden p-0.5">
+                        <div id="progress-bar" class="h-full bg-gradient-to-r from-indigo-500 to-indigo-400 rounded-full w-0 transition-all duration-700"></div>
+                    </div>
+                </div>
+            </div>
+
+            <p class="text-[10px] text-slate-500 font-medium leading-tight mt-4 italic">
+                * Menampilkan data preprocessing dengan pagination
+            </p>
+        </div>
+    </div>
+
+    <!-- ================= TABLE ================= -->
+    <div class="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden">
+
+        <div class="overflow-x-auto custom-scroll">
+
+            <table class="w-full text-left border-collapse min-w-[1400px]">
+
+                <thead>
+                    <tr class="bg-slate-50/50 border-b border-slate-100">
+
+                        <th class="px-6 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                            Dataset
+                        </th>
+
+                        <th class="px-6 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                            Data Source
+                        </th>
+
+                        <th class="px-6 py-6 text-[10px] font-black text-indigo-500 uppercase tracking-widest border-x border-slate-100/50">
+                            NLP Flow (1 & 2)
+                        </th>
+
+                        <th class="px-6 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                            Tokenization
+                        </th>
+
+                        <th class="px-6 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest border-x border-slate-100/50">
+                            Stopword Removal
+                        </th>
+
+                        <th class="px-6 py-6 text-[10px] font-black text-emerald-600 uppercase tracking-widest">
+                            Final Result
+                        </th>
+
+                    </tr>
+                </thead>
+
+                <tbody class="divide-y divide-slate-50">
+
+                    {% for item in preview_data %}
+                    <tr class="group hover:bg-slate-50/30 transition-colors align-top">
+
+                        <!-- dataset label -->
+                        <td class="px-6 py-8">
+
+                            {% if item.source_type == 'trend' %}
+                                <span class="px-3 py-1 bg-orange-100 text-orange-700 text-[10px] font-black rounded-xl uppercase tracking-wider">
+                                    Google Trends
+                                </span>
+                            {% else %}
+                                <span class="px-3 py-1 bg-indigo-100 text-indigo-700 text-[10px] font-black rounded-xl uppercase tracking-wider">
+                                    Social Media
+                                </span>
+                            {% endif %}
+
+                        </td>
+
+                        <!-- RAW -->
+                        <td class="px-6 py-8 min-w-[300px]">
+                            <div class="relative p-4 bg-slate-50/50 border border-slate-100 rounded-2xl">
+                                <p class="text-[11px] text-slate-600 leading-relaxed italic whitespace-pre-wrap">
+                                    {{ item.raw }}
+                                </p>
+                            </div>
+                        </td>
+
+                        <!-- NLP -->
+                        <td class="px-6 py-8 min-w-[300px] border-x border-slate-50">
+
+                            <div class="space-y-4">
+
+                                <div class="bg-indigo-50/30 p-3 rounded-xl border border-indigo-100/50">
+                                    <span class="text-[9px] font-black text-indigo-400 uppercase block mb-2">
+                                        Case Folding
+                                    </span>
+                                    <p class="text-[11px] text-indigo-700">{{ item.case_folding }}</p>
+                                </div>
+
+                                <div class="p-3">
+                                    <span class="text-[9px] font-black text-slate-400 uppercase block mb-2">
+                                        Cleaning
+                                    </span>
+                                    <p class="text-[11px] text-slate-600">{{ item.cleaning }}</p>
+                                </div>
+
+                            </div>
+
+                        </td>
+
+                        <!-- TOKEN -->
+                        <td class="px-6 py-8 min-w-[350px]">
+                            <div class="flex flex-wrap gap-2">
+                                {% for t in item.tokenization.split() %}
+                                <span class="px-2 py-1 bg-white border text-slate-600 text-[10px] rounded-lg">
+                                    {{ t }}
+                                </span>
+                                {% endfor %}
+                            </div>
+                        </td>
+
+                        <!-- STOPWORD -->
+                        <td class="px-6 py-8 min-w-[350px] border-x border-slate-50 bg-slate-50/10">
+                            <div class="flex flex-wrap gap-2">
+                                {% for t in (item.stopword or '').split() %}
+                                <span class="px-2 py-1 bg-rose-50 text-rose-600 text-[10px] rounded-lg border">
+                                    {{ t }}
+                                </span>
+                                {% endfor %}
+                            </div>
+                        </td>
+
+                        <!-- FINAL -->
+                        <td class="px-6 py-8 min-w-[250px]">
+                            <div class="p-5 bg-emerald-50 border border-emerald-100 rounded-[1.5rem]">
+                                <p class="text-[12px] font-extrabold text-emerald-900">
+                                    {{ item.final }}
+                                </p>
+                            </div>
+                        </td>
+
+                    </tr>
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        <!-- ================= PAGINATION (TAMBAHAN) ================= -->
+        <div class="flex justify-between items-center p-6">
+
+            {% if pagination.has_prev %}
+                <a href="?page={{ pagination.prev_num }}&dataset={{ dataset }}"
+                   class="px-4 py-2 bg-slate-200 rounded-xl text-xs">
+                    Previous
+                </a>
+            {% else %}
+                <span class="px-4 py-2 bg-slate-100 rounded-xl text-xs opacity-50">Previous</span>
+            {% endif %}
+
+            <span class="text-xs text-slate-500">
+                Page {{ pagination.page }} / {{ pagination.pages }}
+            </span>
+
+            {% if pagination.has_next %}
+                <a href="?page={{ pagination.next_num }}&dataset={{ dataset }}"
+                   class="px-4 py-2 bg-slate-200 rounded-xl text-xs">
+                    Next
+                </a>
+            {% else %}
+                <span class="px-4 py-2 bg-slate-100 rounded-xl text-xs opacity-50">Next</span>
+            {% endif %}
+
+        </div>
+
+    </div>
+</div>
+
+<style>
+.custom-scroll::-webkit-scrollbar { height: 10px; width: 4px; }
+.custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+</style>
+
+<script>
+function startPreprocessing(){
+    const btn = document.getElementById("btn-process");
+    const btnText = document.getElementById("btn-text");
+
+    btn.disabled = true;
+    btnText.innerText = "Processing...";
+
+    fetch("/admin/run-preprocessing", { method: "POST" })
+    .then(res => res.json())
+    .then(res => {
+        alert(res.msg);
+        location.reload();
+    })
+    .catch(() => {
+        alert("Error server");
+        btn.disabled = false;
+        btnText.innerText = "Run Pipeline";
+    });
+}
+</script>
+
+{% endblock %}

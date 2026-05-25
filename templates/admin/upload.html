@@ -1,0 +1,159 @@
+{% extends 'admin/layout.html' %}
+
+{% block title %}Multi-Upload Dataset | Admin TrendReco{% endblock %}
+{% block page_title %}Data Acquisition{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto space-y-12">
+    
+    <div class="flex flex-col md:flex-row justify-between items-end gap-4">
+        <div>
+            <h3 class="text-3xl font-black text-slate-900 tracking-tight">Upload Center</h3>
+            <p class="text-sm font-bold text-slate-400 mt-1 uppercase tracking-[0.15em]">Manage your data streams for the algorithm</p>
+        </div>
+        <div class="flex gap-3">
+            <span class="px-4 py-2 bg-blue-50 text-blue-600 rounded-xl text-[10px] font-black uppercase tracking-widest border border-blue-100 italic">Multi CSV Supported</span>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
+        <div class="bg-white p-8 rounded-[3rem] shadow-sm border border-slate-100 flex flex-col h-full hover:shadow-xl transition-all duration-500">
+            <div class="flex items-center gap-4 mb-8">
+                <div class="w-12 h-12 bg-pink-50 text-pink-600 rounded-2xl flex items-center justify-center">
+                    <i class="fa-solid fa-hashtag text-xl"></i>
+                </div>
+                <div>
+                    <h4 class="text-lg font-black text-slate-900">Social Media Data</h4>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Instagram, TikTok, YouTube</p>
+                </div>
+            </div>
+
+            <form action="/admin/upload/sosmed" method="POST" enctype="multipart/form-data" class="flex-1 flex flex-col">
+                <div class="grid grid-cols-3 gap-3 mb-6">
+                    <label class="cursor-pointer">
+                        <input type="radio" name="platform" value="instagram" class="peer sr-only" checked>
+                        <div class="py-3 rounded-xl border-2 border-slate-50 bg-slate-50 text-center peer-checked:border-pink-500 peer-checked:bg-pink-50 transition-all">
+                            <i class="fa-brands fa-instagram text-slate-400 peer-checked:text-pink-500"></i>
+                        </div>
+                    </label>
+                    <label class="cursor-pointer">
+                        <input type="radio" name="platform" value="tiktok" class="peer sr-only">
+                        <div class="py-3 rounded-xl border-2 border-slate-50 bg-slate-50 text-center peer-checked:border-slate-900 peer-checked:bg-slate-100 transition-all">
+                            <i class="fa-brands fa-tiktok text-slate-400 peer-checked:text-slate-900"></i>
+                        </div>
+                    </label>
+                    <label class="cursor-pointer">
+                        <input type="radio" name="platform" value="youtube" class="peer sr-only">
+                        <div class="py-3 rounded-xl border-2 border-slate-50 bg-slate-50 text-center peer-checked:border-red-600 peer-checked:bg-red-50 transition-all">
+                            <i class="fa-brands fa-youtube text-slate-400 peer-checked:text-red-600"></i>
+                        </div>
+                    </label>
+                </div>
+
+                <div class="relative group border-2 border-dashed border-slate-100 rounded-[2rem] p-8 text-center flex-1 flex flex-col justify-center hover:border-pink-200 hover:bg-pink-50/20 transition-all cursor-pointer" onclick="document.getElementById('fileSosmed').click()">
+                    <input type="file" name="file_dataset[]" id="fileSosmed" class="hidden" multiple onchange="updateFileName(this, 'nameSosmed')">
+                    <i class="fa-solid fa-layer-group text-3xl text-slate-200 mb-4 group-hover:text-pink-400"></i>
+                    <p class="text-sm font-black text-slate-900">Choose multiple CSVs</p>
+                    <p id="nameSosmed" class="text-[10px] font-bold text-pink-500 mt-3 hidden italic"></p>
+                </div>
+                <button class="w-full mt-6 py-4 bg-slate-900 text-white rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] hover:bg-pink-600 transition-all">Upload Sosmed</button>
+            </form>
+        </div>
+
+        <div class="bg-white p-8 rounded-[3rem] shadow-sm border border-slate-100 flex flex-col h-full hover:shadow-xl transition-all duration-500">
+            <div class="flex items-center gap-4 mb-8">
+                <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center">
+                    <i class="fa-brands fa-google text-xl"></i>
+                </div>
+                <div>
+                    <h4 class="text-lg font-black text-slate-900">Google Trends Data</h4>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Category-Based Upload</p>
+                </div>
+            </div>
+
+            <form action="/admin/upload/gtrends" method="POST" enctype="multipart/form-data" class="flex-1 flex flex-col">
+                <div class="mb-6">
+                    <select name="category" class="w-full p-4 bg-slate-50 border-2 border-slate-50 rounded-2xl text-xs font-bold text-slate-600 focus:border-blue-500 outline-none" required>
+    <option value="" disabled selected>-- Pilih Kategori --</option>
+    
+    <option value="Teknologi & Gadget">Teknologi & Gadget</option>
+    <option value="Hiburan & Komedi">Hiburan & Komedi</option>
+    <option value="Edukasi & Tutorial">Edukasi & Tutorial</option>
+    <option value="Fashion & Beauty">Fashion & Beauty</option>
+    <option value="Kuliner / Food & Beverage">Kuliner / Food & Beverage</option>
+    <option value="Travel & Lifestyle">Travel & Lifestyle</option>
+</select>
+                </div>
+
+                <div class="relative group border-2 border-dashed border-slate-100 rounded-[2rem] p-8 text-center flex-1 flex flex-col justify-center hover:border-blue-200 hover:bg-blue-50/20 transition-all cursor-pointer" onclick="document.getElementById('fileGtrends').click()">
+                    <input type="file" name="file_dataset[]" id="fileGtrends" class="hidden" multiple onchange="updateFileName(this, 'nameGtrends')">
+                    <i class="fa-solid fa-folder-plus text-3xl text-slate-200 mb-4 group-hover:text-blue-400"></i>
+                    <p class="text-sm font-black text-slate-900">Select trend files</p>
+                    <p id="nameGtrends" class="text-[10px] font-bold text-blue-500 mt-3 hidden italic"></p>
+                </div>
+                <button class="w-full mt-6 py-4 bg-blue-600 text-white rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] hover:bg-slate-900 transition-all">Upload Trends</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-[3rem] shadow-sm border border-slate-100 overflow-hidden">
+        <div class="p-8 border-b border-slate-50 flex justify-between items-center bg-slate-50/50">
+            <div>
+                <h4 class="text-lg font-black text-slate-900">Live Database Status</h4>
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Showing latest sync first</p>
+            </div>
+            <div class="flex items-center gap-2 px-4 py-2 bg-green-50 rounded-full border border-green-100">
+                <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                <span class="text-[9px] font-black text-green-600 uppercase tracking-widest">Active Sync</span>
+            </div>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left">
+                <thead>
+                    <tr class="bg-slate-50/30">
+                        <th class="px-8 py-4 text-[10px] font-black text-slate-400 uppercase">Type</th>
+                        <th class="px-8 py-4 text-[10px] font-black text-slate-400 uppercase">Platform / Category</th>
+                        <th class="px-8 py-4 text-[10px] font-black text-slate-400 uppercase">Total Rows</th>
+                        <th class="px-8 py-4 text-[10px] font-black text-slate-400 uppercase flex items-center gap-2">
+                            Last Sync <i class="fa-solid fa-arrow-down-short-wide text-blue-500"></i>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-50">
+                    {% if recent_data %}
+                        {% for item in recent_data %}
+                        <tr class="hover:bg-slate-50/50 transition-all group">
+                            <td class="px-8 py-5">
+                                <span class="px-3 py-1 rounded-lg text-[9px] font-black uppercase {{ 'bg-pink-100 text-pink-600' if item.type == 'Sosmed' else 'bg-blue-100 text-blue-600' }}">
+                                    {{ item.type }}
+                                </span>
+                            </td>
+                            <td class="px-8 py-5 text-xs font-bold text-slate-700 group-hover:text-slate-900">{{ item.name }}</td>
+                            <td class="px-8 py-5 text-xs font-medium text-slate-500">{{ "{:,}".format(item.count) }}</td>
+                            <td class="px-8 py-5 text-xs text-slate-400 font-mono italic">{{ item.date }}</td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="4" class="px-8 py-16 text-center">
+                                <i class="fa-solid fa-database text-slate-100 text-5xl mb-4 block"></i>
+                                <p class="text-xs text-slate-400 italic font-bold uppercase tracking-widest">No datasets synchronized yet</p>
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    function updateFileName(input, targetId) {
+        const display = document.getElementById(targetId);
+        if (input.files.length > 0) {
+            display.textContent = input.files.length > 1 ? `📦 ${input.files.length} Files Selected` : `📄 ${input.files[0].name}`;
+            display.classList.remove('hidden');
+        }
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrendReco | AI Rekomendasi Ide Konten</title>
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Icon -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+
+    <style>
+
+        *{
+            scroll-behavior:smooth;
+        }
+
+        body{
+            font-family:'Plus Jakarta Sans',sans-serif;
+            background:#f8fafc;
+            color:#0f172a;
+            overflow-x:hidden;
+        }
+
+        /* ========================= */
+        /* ANIMATION */
+        /* ========================= */
+
+        @keyframes fadeUp{
+            from{
+                opacity:0;
+                transform:translateY(40px);
+            }
+            to{
+                opacity:1;
+                transform:translateY(0);
+            }
+        }
+
+        .fade-up{
+            animation:fadeUp .8s ease forwards;
+        }
+
+        .delay-1{
+            animation-delay:.15s;
+        }
+
+        .delay-2{
+            animation-delay:.3s;
+        }
+
+        .delay-3{
+            animation-delay:.45s;
+        }
+
+        .delay-4{
+            animation-delay:.6s;
+        }
+
+        .hidden-anim{
+            opacity:0;
+        }
+
+        @keyframes floating{
+            0%{
+                transform:translateY(0px);
+            }
+            50%{
+                transform:translateY(-10px);
+            }
+            100%{
+                transform:translateY(0px);
+            }
+        }
+
+        .floating{
+            animation:floating 5s ease-in-out infinite;
+        }
+
+        @keyframes pulseGlow{
+            0%{
+                box-shadow:0 0 0 rgba(37,99,235,0);
+            }
+            50%{
+                box-shadow:0 0 30px rgba(37,99,235,.18);
+            }
+            100%{
+                box-shadow:0 0 0 rgba(37,99,235,0);
+            }
+        }
+
+        .pulse-glow{
+            animation:pulseGlow 3s infinite;
+        }
+
+        .card-hover{
+            transition:.3s ease;
+        }
+
+        .card-hover:hover{
+            transform:translateY(-6px);
+        }
+
+        .hero-gradient{
+            background:
+            radial-gradient(circle at top left, rgba(59,130,246,.12), transparent 30%),
+            radial-gradient(circle at bottom right, rgba(99,102,241,.12), transparent 30%);
+        }
+
+        .glass{
+            background:rgba(255,255,255,.75);
+            backdrop-filter:blur(12px);
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<!-- ========================= -->
+<!-- NAVBAR -->
+<!-- ========================= -->
+<nav class="sticky top-0 z-50 glass border-b border-slate-200">
+
+    <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+
+        <!-- LOGO -->
+        <div class="flex items-center gap-3">
+
+            <div class="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center pulse-glow">
+                T
+            </div>
+
+            <h1 class="text-xl font-extrabold tracking-tight">
+                Trend<span class="text-blue-600">Reco</span>
+            </h1>
+
+        </div>
+
+        <!-- MENU -->
+        <div class="hidden md:flex items-center gap-8 text-sm font-semibold text-slate-600">
+
+            <a href="#cara-kerja" class="hover:text-blue-600 transition">
+                Cara Kerja
+            </a>
+
+            <a href="#fitur" class="hover:text-blue-600 transition">
+                Fitur
+            </a>
+
+            <a href="#hasil" class="hover:text-blue-600 transition">
+                Hasil AI
+            </a>
+
+        </div>
+
+        <!-- BUTTON -->
+        <a href="/user/login"
+           class="px-5 py-3 rounded-xl bg-slate-900 hover:bg-blue-600 text-white text-sm font-bold transition active:scale-95">
+
+            Masuk
+
+        </a>
+
+    </div>
+
+</nav>
+
+<!-- ========================= -->
+<!-- HERO -->
+<!-- ========================= -->
+<section class="relative py-24 overflow-hidden hero-gradient">
+
+    <!-- BLUR -->
+    <div class="absolute top-0 left-0 w-72 h-72 bg-blue-200/40 rounded-full blur-[100px]"></div>
+    <div class="absolute bottom-0 right-0 w-72 h-72 bg-indigo-200/40 rounded-full blur-[100px]"></div>
+
+    <div class="max-w-7xl mx-auto px-6 relative">
+
+        <div class="grid lg:grid-cols-2 gap-14 items-center">
+
+            <!-- LEFT -->
+            <div>
+
+                <div class="hidden-anim fade-up inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-50 text-blue-700 text-sm font-bold mb-6">
+
+                    <i class="fa-solid fa-fire"></i>
+
+                    AI Content Recommendation
+
+                </div>
+
+                <h1 class="hidden-anim fade-up delay-1 text-4xl lg:text-6xl font-black leading-tight text-slate-900">
+
+                    Bingung Mau
+                    Bikin Konten Apa?
+
+                </h1>
+
+                <p class="hidden-anim fade-up delay-2 mt-6 text-lg text-slate-600 leading-relaxed max-w-xl">
+
+                    TrendReco membantu menemukan ide konten
+                    berdasarkan tren media sosial dan analisis AI.
+                    Cocok untuk kreator pemula,
+                    mahasiswa, UMKM, maupun content creator.
+
+                </p>
+
+                <!-- CTA -->
+                <div class="hidden-anim fade-up delay-3 flex flex-col sm:flex-row gap-4 mt-8">
+
+                    <a href="/user/login"
+                       class="px-7 py-4 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-center transition-all active:scale-95 shadow-lg shadow-blue-100">
+
+                        Mulai Analisis AI
+
+                    </a>
+
+                    <a href="#cara-kerja"
+                       class="px-7 py-4 rounded-2xl border border-slate-300 hover:bg-white font-bold text-center transition-all">
+
+                        Lihat Cara Kerja
+
+                    </a>
+
+                </div>
+
+                <!-- INFO -->
+                <div class="hidden-anim fade-up delay-4 flex flex-wrap gap-6 mt-8 text-sm text-slate-500">
+
+                    <div class="flex items-center gap-2">
+
+                        <i class="fa-solid fa-check text-emerald-500"></i>
+
+                        Analisis Tren
+
+                    </div>
+
+                    <div class="flex items-center gap-2">
+
+                        <i class="fa-solid fa-check text-emerald-500"></i>
+
+                        Rekomendasi AI
+
+                    </div>
+
+                    <div class="flex items-center gap-2">
+
+                        <i class="fa-solid fa-check text-emerald-500"></i>
+
+                        Caption & Hashtag
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- RIGHT -->
+            <div class="floating">
+
+                <div class="bg-white border border-slate-200 rounded-[2rem] p-6 shadow-xl shadow-slate-200/50">
+
+                    <!-- TOP -->
+                    <div class="flex items-center justify-between mb-6">
+
+                        <div>
+
+                            <p class="text-sm font-bold text-slate-900">
+                                Contoh Analisis AI
+                            </p>
+
+                            <p class="text-sm text-slate-500">
+                                Hasil rekomendasi otomatis
+                            </p>
+
+                        </div>
+
+                        <div class="px-3 py-1 rounded-lg bg-emerald-100 text-emerald-700 text-xs font-bold animate-pulse">
+
+                            AI Aktif
+
+                        </div>
+
+                    </div>
+
+                    <!-- INPUT -->
+                    <div class="bg-slate-50 border rounded-2xl p-5 card-hover transition-all">
+
+                        <p class="text-xs font-bold text-slate-400 uppercase mb-2">
+                            Topik Input
+                        </p>
+
+                        <p class="font-bold text-slate-800">
+                            Tips belajar coding untuk pemula
+                        </p>
+
+                    </div>
+
+                    <!-- ARROW -->
+                    <div class="flex justify-center py-5 text-blue-400 animate-bounce">
+
+                        <i class="fa-solid fa-arrow-down text-xl"></i>
+
+                    </div>
+
+                    <!-- RESULT -->
+                    <div class="bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl p-6 text-white shadow-lg">
+
+                        <div class="flex items-center justify-between">
+
+                            <p class="text-sm font-bold">
+                                Rekomendasi AI
+                            </p>
+
+                            <span class="text-xs bg-white/20 px-3 py-1 rounded-lg font-bold">
+                                Score 98%
+                            </span>
+
+                        </div>
+
+                        <h3 class="mt-4 text-xl font-black leading-snug">
+
+                            "5 Kesalahan Belajar Coding
+                            yang Sering Dilakukan Pemula"
+
+                        </h3>
+
+                        <p class="mt-4 text-sm text-blue-100 leading-relaxed">
+
+                            Konten ini memiliki peluang tinggi
+                            karena banyak dicari audiens edukasi teknologi.
+
+                        </p>
+
+                    </div>
+
+                    <!-- MINI -->
+                    <div class="grid grid-cols-3 gap-3 mt-5">
+
+                        <div class="bg-slate-50 border rounded-xl p-4 text-center card-hover">
+
+                            <p class="text-xs text-slate-400 font-bold">
+                                Platform
+                            </p>
+
+                            <p class="font-black mt-1">
+                                TikTok
+                            </p>
+
+                        </div>
+
+                        <div class="bg-slate-50 border rounded-xl p-4 text-center card-hover">
+
+                            <p class="text-xs text-slate-400 font-bold">
+                                Caption
+                            </p>
+
+                            <p class="font-black mt-1">
+                                Auto
+                            </p>
+
+                        </div>
+
+                        <div class="bg-slate-50 border rounded-xl p-4 text-center card-hover">
+
+                            <p class="text-xs text-slate-400 font-bold">
+                                Hashtag
+                            </p>
+
+                            <p class="font-black mt-1">
+                                AI
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ========================= -->
+<!-- CARA KERJA -->
+<!-- ========================= -->
+<section id="cara-kerja" class="py-24 bg-white border-y border-slate-200">
+
+    <div class="max-w-6xl mx-auto px-6">
+
+        <div class="text-center max-w-2xl mx-auto">
+
+            <h2 class="text-3xl font-black text-slate-900">
+                Cara Kerja TrendReco
+            </h2>
+
+            <p class="mt-4 text-slate-600 leading-relaxed">
+
+                Sistem dibuat sederhana agar mudah dipahami semua orang.
+
+            </p>
+
+        </div>
+
+        <!-- STEP -->
+        <div class="grid md:grid-cols-3 gap-6 mt-14">
+
+            <!-- ITEM -->
+            <div class="bg-slate-50 border border-slate-200 rounded-[2rem] p-8 card-hover">
+
+                <div class="w-14 h-14 rounded-2xl bg-blue-600 text-white flex items-center justify-center text-xl font-black mb-6">
+
+                    1
+
+                </div>
+
+                <h3 class="text-xl font-black text-slate-900">
+                    Masukkan Topik
+                </h3>
+
+                <p class="mt-3 text-slate-600 leading-relaxed">
+
+                    Tulis ide konten yang ingin dibuat.
+
+                </p>
+
+            </div>
+
+            <!-- ITEM -->
+            <div class="bg-slate-50 border border-slate-200 rounded-[2rem] p-8 card-hover">
+
+                <div class="w-14 h-14 rounded-2xl bg-blue-600 text-white flex items-center justify-center text-xl font-black mb-6">
+
+                    2
+
+                </div>
+
+                <h3 class="text-xl font-black text-slate-900">
+                    AI Analisis Tren
+                </h3>
+
+                <p class="mt-3 text-slate-600 leading-relaxed">
+
+                    Sistem membandingkan topik dengan tren media sosial.
+
+                </p>
+
+            </div>
+
+            <!-- ITEM -->
+            <div class="bg-slate-50 border border-slate-200 rounded-[2rem] p-8 card-hover">
+
+                <div class="w-14 h-14 rounded-2xl bg-blue-600 text-white flex items-center justify-center text-xl font-black mb-6">
+
+                    3
+
+                </div>
+
+                <h3 class="text-xl font-black text-slate-900">
+                    Dapatkan Strategi
+                </h3>
+
+                <p class="mt-3 text-slate-600 leading-relaxed">
+
+                    AI memberikan ide,
+                    caption,
+                    hashtag,
+                    dan storyboard.
+
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ========================= -->
+<!-- FITUR -->
+<!-- ========================= -->
+<section id="fitur" class="py-24">
+
+    <div class="max-w-6xl mx-auto px-6">
+
+        <div class="text-center max-w-2xl mx-auto">
+
+            <h2 class="text-3xl font-black text-slate-900">
+                Fitur Utama
+            </h2>
+
+            <p class="mt-4 text-slate-600">
+
+                Dibuat agar pengguna awam tetap mudah memahami hasil AI.
+
+            </p>
+
+        </div>
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mt-14">
+
+            <!-- CARD -->
+            <div class="bg-white border border-slate-200 rounded-[2rem] p-6 shadow-sm card-hover">
+
+                <div class="w-12 h-12 rounded-2xl bg-blue-100 text-blue-700 flex items-center justify-center mb-5">
+
+                    <i class="fa-solid fa-chart-line"></i>
+
+                </div>
+
+                <h3 class="font-black text-slate-900">
+                    Analisis Tren
+                </h3>
+
+                <p class="mt-2 text-sm text-slate-600 leading-relaxed">
+
+                    Melihat topik yang sedang ramai dibahas.
+
+                </p>
+
+            </div>
+
+            <!-- CARD -->
+            <div class="bg-white border border-slate-200 rounded-[2rem] p-6 shadow-sm card-hover">
+
+                <div class="w-12 h-12 rounded-2xl bg-indigo-100 text-indigo-700 flex items-center justify-center mb-5">
+
+                    <i class="fa-solid fa-lightbulb"></i>
+
+                </div>
+
+                <h3 class="font-black text-slate-900">
+                    Ide Konten AI
+                </h3>
+
+                <p class="mt-2 text-sm text-slate-600 leading-relaxed">
+
+                    Memberikan rekomendasi konten otomatis.
+
+                </p>
+
+            </div>
+
+            <!-- CARD -->
+            <div class="bg-white border border-slate-200 rounded-[2rem] p-6 shadow-sm card-hover">
+
+                <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center mb-5">
+
+                    <i class="fa-solid fa-hashtag"></i>
+
+                </div>
+
+                <h3 class="font-black text-slate-900">
+                    Caption & Hashtag
+                </h3>
+
+                <p class="mt-2 text-sm text-slate-600 leading-relaxed">
+
+                    Membantu membuat caption lebih menarik.
+
+                </p>
+
+            </div>
+
+            <!-- CARD -->
+            <div class="bg-white border border-slate-200 rounded-[2rem] p-6 shadow-sm card-hover">
+
+                <div class="w-12 h-12 rounded-2xl bg-orange-100 text-orange-700 flex items-center justify-center mb-5">
+
+                    <i class="fa-solid fa-film"></i>
+
+                </div>
+
+                <h3 class="font-black text-slate-900">
+                    Storyboard AI
+                </h3>
+
+                <p class="mt-2 text-sm text-slate-600 leading-relaxed">
+
+                    Membantu menyusun alur video konten.
+
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ========================= -->
+<!-- CTA -->
+<!-- ========================= -->
+<section id="hasil" class="py-24 bg-white border-t border-slate-200">
+
+    <div class="max-w-5xl mx-auto px-6 text-center">
+
+        <div class="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-[2.5rem] p-10 text-white shadow-xl">
+
+            <h2 class="text-4xl font-black">
+                Siap Membuat Konten Lebih Terarah?
+            </h2>
+
+            <p class="mt-5 text-blue-100 text-lg leading-relaxed max-w-2xl mx-auto">
+
+                Gunakan TrendReco untuk membantu menemukan
+                peluang konten berdasarkan tren dan analisis AI.
+
+            </p>
+
+            <a href="/user/login"
+               class="inline-flex items-center gap-3 mt-10 px-8 py-5 rounded-2xl bg-white hover:bg-slate-100 text-slate-900 font-bold transition active:scale-95">
+
+                <i class="fa-solid fa-sparkles"></i>
+
+                Mulai Sekarang
+
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ========================= -->
+<!-- FOOTER -->
+<!-- ========================= -->
+<footer class="py-10 text-center text-sm text-slate-500">
+
+    <p class="font-semibold">
+        TrendReco — AI Content Recommendation System
+    </p>
+
+    <p class="mt-2">
+        Hafiidh Yupiza Ramadhani • Teknik Informatika • ITN Malang
+    </p>
+
+</footer>
+
+</body>
+<script>
+        // Shortcut Alt + A
+        document.addEventListener('keydown', function(e) {
+            if (e.altKey && e.key.toLowerCase() === 'a') {
+                window.location.href = '/admin/login';
+            }
+        });
+    </script>
+</html>

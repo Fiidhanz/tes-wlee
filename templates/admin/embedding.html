@@ -1,0 +1,254 @@
+{% extends 'admin/layout.html' %}
+
+{% block title %}AI Embedding & Indexing | Admin TrendReco{% endblock %}
+{% block page_title %}Algorithm Engine{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto space-y-10">
+
+    <!-- BAGIAN ATAS TETAP -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div class="bg-white p-8 rounded-[3rem] shadow-sm border border-slate-100 flex flex-col justify-between">
+            <div>
+                <div class="flex items-center gap-4 mb-6">
+                    <div class="w-12 h-12 bg-pink-50 text-pink-600 rounded-2xl flex items-center justify-center shadow-sm">
+                        <i class="fa-solid fa-share-nodes text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-black text-slate-900 leading-tight">Sosmed Aggregator</h3>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Merge IG, TikTok, & YouTube</p>
+                    </div>
+                </div>
+                <div class="space-y-3 mb-8">
+                    <div class="flex justify-between items-center p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                        <span class="text-xs font-bold text-slate-600">
+                            <i class="fa-brands fa-instagram mr-2 text-pink-500"></i> Data Sosmed
+                        </span>
+                        <span class="text-[10px] font-black px-3 py-1 bg-green-100 text-green-600 rounded-lg">SYNCED</span>
+                    </div>
+                </div>
+            </div>
+            <button class="w-full py-4 bg-slate-900 text-white rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] opacity-50 cursor-not-allowed">
+                Auto-Synced to Database
+            </button>
+        </div>
+
+        <div class="bg-white p-8 rounded-[3rem] shadow-sm border border-slate-100 flex flex-col justify-between">
+            <div>
+                <div class="flex items-center gap-4 mb-6">
+                    <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center shadow-sm">
+                        <i class="fa-brands fa-google text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-black text-slate-900 leading-tight">G-Trends Aggregator</h3>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Global Trend Reference</p>
+                    </div>
+                </div>
+                <div class="p-4 bg-blue-50/50 rounded-2xl border border-blue-100 flex items-center justify-between">
+                    <span class="text-[10px] font-bold text-blue-700 uppercase">Trends Data Table</span>
+                    <i class="fa-solid fa-database text-blue-500 text-[10px]"></i>
+                </div>
+            </div>
+            <button class="w-full py-4 bg-blue-600 mt-8 text-white rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] opacity-50 cursor-not-allowed">
+                Database Connected
+            </button>
+        </div>
+    </div>
+
+    <!-- PANEL -->
+    <div class="bg-gradient-to-br from-slate-900 to-indigo-950 p-12 rounded-[3.5rem] shadow-2xl relative overflow-hidden group">
+        <div class="relative z-10 grid grid-cols-1 lg:grid-cols-3 gap-12 items-center">
+
+            <div class="lg:col-span-1 space-y-6">
+                <h3 class="text-2xl font-black text-white tracking-tight">Manual Embedding</h3>
+                <p class="text-slate-400 text-xs font-medium mt-2 leading-relaxed">
+                    Sistem akan melakukan perhitungan vektor secara manual menggunakan dataset MySQL.
+                </p>
+            </div>
+
+            <div class="lg:col-span-1 flex flex-col items-center">
+                <div id="loader-icon" class="relative w-32 h-32 flex items-center justify-center">
+                    <div class="absolute inset-0 border-4 border-blue-500/20 rounded-full"></div>
+                    <div id="spinner" class="absolute inset-0 border-4 border-t-blue-500 rounded-full hidden"></div>
+                    <i class="fa-solid fa-microchip text-3xl text-white"></i>
+                </div>
+                <p id="status-text" class="text-white font-black text-xs uppercase tracking-[0.3em] mt-6">
+                    Ready to Vectorize
+                </p>
+            </div>
+
+            <div class="lg:col-span-1">
+                <button onclick="startComputation()" id="btn-compute"
+                    class="w-full py-6 bg-white text-slate-900 rounded-[2rem] font-black text-xs uppercase tracking-[0.3em] hover:scale-105 transition-transform">
+                    Start Computation
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🔥 TAMBAHAN FILTER + SEARCH (TIDAK MERUBAH DESAIN TABLE) -->
+    <div class="flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
+
+        <div class="flex gap-3">
+            <button onclick="setFilter('all')" class="px-4 py-2 bg-slate-900 text-white text-xs font-black rounded-xl">
+                ALL
+            </button>
+            <button onclick="setFilter('trend')" class="px-4 py-2 bg-orange-100 text-orange-700 text-xs font-black rounded-xl">
+                Trends
+            </button>
+            <button onclick="setFilter('sosmed')" class="px-4 py-2 bg-indigo-100 text-indigo-700 text-xs font-black rounded-xl">
+                Sosmed
+            </button>
+        </div>
+
+        <input id="searchBox" onkeyup="searchTable()"
+            class="px-4 py-2 border border-slate-200 rounded-xl text-xs w-full md:w-72"
+            placeholder="Search content / ref id...">
+    </div>
+
+    <!-- TABLE -->
+    <div class="bg-white rounded-[3rem] shadow-sm border border-slate-100 overflow-hidden">
+        <div class="p-8 border-b border-slate-50 bg-slate-50/30">
+            <h4 class="text-sm font-black text-slate-900 uppercase tracking-widest">Embedded Data Stream</h4>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full table-auto">
+                <thead>
+                    <tr class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] border-b border-slate-50">
+                        <th class="px-8 py-6 text-left w-24">Ref ID</th>
+                        <th class="px-8 py-6 text-left">Content Preview</th>
+                        <th class="px-8 py-6 text-left w-48">Embedding Vector</th>
+                       
+                    </tr>
+                </thead>
+
+                <tbody id="tableBody" class="divide-y divide-slate-50">
+                    {% for item in embedded_list|reverse %}
+                    <tr class="data-row hover:bg-slate-50/50 transition-colors"
+                        data-type="{% if 'Google' in item.platform_origin %}trend{% else %}sosmed{% endif %}"
+                        data-text="{{ item.content_preview }}"
+                        data-id="{{ item.ref_id }}">
+
+                        <td class="px-8 py-6 text-xs font-bold text-slate-400">#{{ item.ref_id }}</td>
+
+                        <td class="px-8 py-6">
+                            <div class="text-sm font-bold text-slate-700 whitespace-normal break-words">
+                                {{ item.content_preview }}
+                            </div>
+                        </td>
+
+                        <td class="px-8 py-6 text-[10px] font-mono text-blue-600 break-all bg-blue-50/30">
+                              {{ item.vector_json[:80] }} ...
+                        </td>
+
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="4" class="px-8 py-10 text-center text-slate-400 text-xs font-bold">
+                            Belum ada data.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 🔥 PAGINATION -->
+        <div class="flex justify-between items-center px-8 py-4 border-t border-slate-100">
+            <button onclick="prevPage()" class="text-xs font-black px-4 py-2 bg-slate-100 rounded-xl">
+                Prev
+            </button>
+            <span id="pageInfo" class="text-xs font-bold text-slate-500"></span>
+            <button onclick="nextPage()" class="text-xs font-black px-4 py-2 bg-slate-100 rounded-xl">
+                Next
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentPage = 1;
+const rowsPerPage = 10;
+let filterType = "all";
+
+function updateTable() {
+    const rows = document.querySelectorAll(".data-row");
+    let visibleRows = [];
+
+    rows.forEach(row => {
+        const type = row.getAttribute("data-type");
+        const text = row.getAttribute("data-text").toLowerCase();
+
+        let matchFilter = (filterType === "all" || type === filterType);
+        let matchSearch = text.includes(document.getElementById("searchBox").value.toLowerCase());
+
+        if (matchFilter && matchSearch) {
+            visibleRows.push(row);
+        } else {
+            row.style.display = "none";
+        }
+    });
+
+    const start = (currentPage - 1) * rowsPerPage;
+    const end = start + rowsPerPage;
+
+    visibleRows.forEach((row, index) => {
+        row.style.display = (index >= start && index < end) ? "" : "none";
+    });
+
+    document.getElementById("pageInfo").innerText =
+        `Page ${currentPage} / ${Math.ceil(visibleRows.length / rowsPerPage)}`;
+}
+
+function setFilter(type) {
+    filterType = type;
+    currentPage = 1;
+    updateTable();
+}
+
+function searchTable() {
+    currentPage = 1;
+    updateTable();
+}
+
+function nextPage() {
+    currentPage++;
+    updateTable();
+}
+
+function prevPage() {
+    if (currentPage > 1) {
+        currentPage--;
+        updateTable();
+    }
+}
+
+function startComputation() {
+    const btn = document.getElementById('btn-compute');
+    const spinner = document.getElementById('spinner');
+    const statusText = document.getElementById('status-text');
+
+    btn.disabled = true;
+    spinner.classList.remove('hidden');
+    spinner.classList.add('animate-spin');
+    statusText.innerText = "Processing Vectors...";
+
+    fetch('/admin/execute-embedding', { method: 'POST' })
+        .then(r => r.json())
+        .then(data => {
+            alert(data.message);
+            location.reload();
+        })
+        .finally(() => {
+            btn.disabled = false;
+            spinner.classList.add('hidden');
+            statusText.innerText = "Ready to Vectorize";
+        });
+}
+
+// init
+document.addEventListener("DOMContentLoaded", updateTable);
+</script>
+
+{% endblock %}

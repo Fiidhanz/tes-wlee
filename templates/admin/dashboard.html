@@ -1,0 +1,197 @@
+{% extends 'admin/layout.html' %}
+
+{% block title %}Dashboard | TrendReco Admin{% endblock %}
+{% block page_title %}System Overview{% endblock %}
+
+{% block content %}
+<div class="space-y-8 animate-in fade-in duration-700">
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="group relative bg-white p-1 rounded-[2.5rem] overflow-hidden shadow-sm border border-slate-100 hover:shadow-2xl hover:shadow-blue-500/10 transition-all duration-500 hover:-translate-y-1">
+            <div class="p-6 bg-white rounded-[2.3rem] relative z-10">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-2xl flex items-center justify-center shadow-lg shadow-blue-200 group-hover:scale-110 transition-transform duration-500">
+                        <i class="fa-solid fa-database text-xl"></i>
+                    </div>
+                    <div class="flex flex-col items-end">
+                        <span class="text-[10px] font-black text-blue-600 bg-blue-50 px-3 py-1 rounded-full border border-blue-100 uppercase">Live</span>
+                    </div>
+                </div>
+                <h3 class="text-slate-400 text-[10px] font-black uppercase tracking-[0.2em] mb-1">Total Dataset</h3>
+                <div class="flex items-baseline gap-2">
+                    <p class="text-3xl font-black text-slate-900 leading-none">{{ "{:,}".format(total_dataset) }}</p>
+                    <span class="text-xs font-bold text-slate-400 uppercase">Rows</span>
+                </div>
+            </div>
+            <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-blue-50 rounded-full blur-3xl group-hover:bg-blue-100 transition-colors"></div>
+        </div>
+
+        <div class="group relative bg-white p-1 rounded-[2.5rem] overflow-hidden shadow-sm border border-slate-100 hover:shadow-2xl hover:shadow-indigo-500/10 transition-all duration-500 hover:-translate-y-1">
+            <div class="p-6 bg-white rounded-[2.3rem] relative z-10">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="w-14 h-14 bg-gradient-to-br from-indigo-500 to-indigo-600 text-white rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-200 group-hover:scale-110 transition-transform duration-500">
+                        <i class="fa-solid fa-microchip text-xl"></i>
+                    </div>
+                    <span class="text-[10px] font-black text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full border border-indigo-100 uppercase">Synced</span>
+                </div>
+                <h3 class="text-slate-400 text-[10px] font-black uppercase tracking-[0.2em] mb-1">Pre-processed</h3>
+                <div class="flex items-baseline gap-2">
+                    <p class="text-3xl font-black text-slate-900 leading-none">{{ "{:,}".format(total_vectorized) }}</p>
+                    <span class="text-xs font-bold text-indigo-400">Cleaned</span>
+                </div>
+            </div>
+            <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-indigo-50 rounded-full blur-3xl group-hover:bg-indigo-100 transition-colors"></div>
+        </div>
+
+        <div class="group relative bg-white p-1 rounded-[2.5rem] overflow-hidden shadow-sm border border-slate-100 hover:shadow-2xl hover:shadow-orange-500/10 transition-all duration-500 hover:-translate-y-1">
+            <div class="p-6 bg-white rounded-[2.3rem] relative z-10">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="w-14 h-14 bg-gradient-to-br from-orange-500 to-orange-600 text-white rounded-2xl flex items-center justify-center shadow-lg shadow-orange-200 group-hover:scale-110 transition-transform duration-500">
+                        <i class="fa-solid fa-users text-xl"></i>
+                    </div>
+                    <span class="text-[10px] font-black text-orange-600 bg-orange-50 px-3 py-1 rounded-full border border-orange-100 uppercase">Active</span>
+                </div>
+                <h3 class="text-slate-400 text-[10px] font-black uppercase tracking-[0.2em] mb-1">User Growth</h3>
+                <p class="text-3xl font-black text-slate-900 leading-none">{{ total_users }}</p>
+            </div>
+            <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-orange-50 rounded-full blur-3xl group-hover:bg-orange-100 transition-colors"></div>
+        </div>
+
+        <div class="group relative bg-white p-1 rounded-[2.5rem] overflow-hidden shadow-sm border border-slate-100 hover:shadow-2xl hover:shadow-emerald-500/10 transition-all duration-500 hover:-translate-y-1">
+            <div class="p-6 bg-white rounded-[2.3rem] relative z-10">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="w-14 h-14 bg-gradient-to-br from-emerald-500 to-emerald-600 text-white rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-200 group-hover:scale-110 transition-transform duration-500">
+                        <i class="fa-solid fa-bolt text-xl"></i>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <span class="relative flex h-2 w-2">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                        </span>
+                        <span class="text-[10px] font-black text-emerald-600 uppercase">Running</span>
+                    </div>
+                </div>
+                <h3 class="text-slate-400 text-[10px] font-black uppercase tracking-[0.2em] mb-1">System Load</h3>
+                <p class="text-3xl font-black text-slate-900 leading-none">Optimal</p>
+            </div>
+            <div class="absolute -right-4 -bottom-4 w-24 h-24 bg-emerald-50 rounded-full blur-3xl group-hover:bg-emerald-100 transition-colors"></div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div class="lg:col-span-2 bg-slate-900 p-10 rounded-[3.5rem] shadow-2xl relative overflow-hidden group">
+            <div class="relative z-10">
+                <div class="flex items-center justify-between mb-12">
+                    <div>
+                        <h3 class="text-white text-2xl font-black tracking-tight">Platform Intelligence</h3>
+                        <p class="text-slate-400 text-[10px] font-bold uppercase tracking-[0.3em] mt-2">Core Dataset Distribution Analysis</p>
+                    </div>
+                    <button class="bg-white/10 hover:bg-white/20 text-white p-3 rounded-2xl transition-all">
+                        <i class="fa-solid fa-download"></i>
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 flex items-center justify-center text-white text-xs shadow-lg shadow-pink-500/20">
+                                    <i class="fa-brands fa-instagram"></i>
+                                </div>
+                                <span class="text-sm font-bold text-white">Instagram</span>
+                            </div>
+                            <span class="text-lg font-black text-white">{{ platform_stats.ig }}%</span>
+                        </div>
+                        <div class="w-full h-4 bg-white/5 rounded-full p-1 border border-white/10">
+                            <div class="h-full bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-600 rounded-full transition-all duration-1000 shadow-[0_0_15px_rgba(236,72,153,0.5)]" style="width: {{ platform_stats.ig }}%"></div>
+                        </div>
+                        <p class="text-[9px] text-slate-500 font-bold uppercase tracking-widest text-right italic">Reels & Carousel Content</p>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-full bg-white flex items-center justify-center text-slate-900 text-xs shadow-lg shadow-white/20">
+                                    <i class="fa-brands fa-tiktok"></i>
+                                </div>
+                                <span class="text-sm font-bold text-white">TikTok</span>
+                            </div>
+                            <span class="text-lg font-black text-white">{{ platform_stats.tiktok }}%</span>
+                        </div>
+                        <div class="w-full h-4 bg-white/5 rounded-full p-1 border border-white/10">
+                            <div class="h-full bg-white rounded-full transition-all duration-1000 shadow-[0_0_15px_rgba(255,255,255,0.3)]" style="width: {{ platform_stats.tiktok }}%"></div>
+                        </div>
+                        <p class="text-[9px] text-slate-500 font-bold uppercase tracking-widest text-right italic">Short-form Video Trends</p>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-full bg-red-600 flex items-center justify-center text-white text-xs shadow-lg shadow-red-500/20">
+                                    <i class="fa-brands fa-youtube"></i>
+                                </div>
+                                <span class="text-sm font-bold text-white">YouTube</span>
+                            </div>
+                            <span class="text-lg font-black text-white">{{ platform_stats.youtube }}%</span>
+                        </div>
+                        <div class="w-full h-4 bg-white/5 rounded-full p-1 border border-white/10">
+                            <div class="h-full bg-red-600 rounded-full transition-all duration-1000 shadow-[0_0_15px_rgba(220,38,38,0.5)]" style="width: {{ platform_stats.youtube }}%"></div>
+                        </div>
+                        <p class="text-[9px] text-slate-500 font-bold uppercase tracking-widest text-right italic">Shorts & Long Video Metadata</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 bg-blue-600/10 rounded-full blur-[100px]"></div>
+            <div class="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 bg-indigo-600/10 rounded-full blur-[100px]"></div>
+        </div>
+
+        <div class="bg-white/80 backdrop-blur-xl p-8 rounded-[3.5rem] border border-slate-100 shadow-xl flex flex-col">
+            <div class="mb-8">
+                <h3 class="text-slate-900 text-xl font-black tracking-tight">System Logs</h3>
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Real-time Pipeline Tracking</p>
+            </div>
+            
+            <div class="space-y-6 flex-grow">
+                {% for activity in recent_activities %}
+                <div class="flex gap-4 group/item cursor-default">
+                    <div class="flex flex-col items-center">
+                        <div class="w-1.5 h-1.5 rounded-full bg-blue-500 group-hover/item:scale-150 transition-transform"></div>
+                        <div class="w-px h-12 bg-slate-100 group-hover/item:bg-blue-100 transition-colors"></div>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="text-xs font-black text-slate-800">Dataset Synchronized</span>
+                            <span class="text-[8px] font-bold bg-slate-100 text-slate-500 px-2 py-0.5 rounded uppercase">{{ activity[0] }}</span>
+                        </div>
+                        <p class="text-[10px] text-slate-400 font-medium tracking-tight">Content processing verified at {{ activity[1].strftime('%H:%M') }}</p>
+                    </div>
+                </div>
+                {% else %}
+                <div class="text-center py-10">
+                    <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fa-solid fa-inbox text-slate-300 text-xl"></i>
+                    </div>
+                    <p class="text-xs text-slate-400 font-bold uppercase tracking-widest">No Recent Logs</p>
+                </div>
+                {% endfor %}
+            </div>
+
+            <a href="/admin/pre-processing" class="group mt-auto flex items-center justify-center gap-3 w-full py-5 bg-slate-900 text-white rounded-[2rem] text-[10px] font-black uppercase tracking-[0.2em] hover:bg-blue-600 transition-all shadow-xl shadow-slate-900/20 hover:shadow-blue-500/20">
+                Launch Pre-processing Pipeline
+                <i class="fa-solid fa-arrow-right animate-pulse group-hover:translate-x-2 transition-transform"></i>
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+    @keyframes fade-in {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-in {
+        animation: fade-in 0.8s ease-out forwards;
+    }
+</style>
+{% endblock %}

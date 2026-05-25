@@ -1,0 +1,424 @@
+{% extends "user/layout.html" %}
+
+{% block title %}Detail History | TrendReco{% endblock %}
+
+{% block content %}
+
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+
+<div class="max-w-7xl mx-auto px-4 lg:px-6 py-6">
+
+    <!-- ================= HEADER ================= -->
+    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5 mb-8">
+
+        <div>
+
+            <div class="flex items-center gap-2 text-sm text-slate-500 mb-3">
+
+                <a href="/user/history"
+                   class="hover:text-slate-900 transition">
+                    History
+                </a>
+
+                <i class="fa-solid fa-chevron-right text-[10px]"></i>
+
+                <span class="text-slate-800 font-semibold">
+                    Detail Workspace
+                </span>
+
+            </div>
+
+            <h1 class="text-3xl font-black text-slate-900 tracking-tight">
+                AI Content Workspace
+            </h1>
+
+            <p class="text-slate-500 mt-2 max-w-2xl leading-relaxed">
+                Semua hasil rekomendasi AI dalam satu generate tersusun rapi
+                agar mudah dipahami dan dicek ulang.
+            </p>
+
+        </div>
+
+        <a href="/user/generate"
+           class="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-semibold transition">
+
+            <i class="fa-solid fa-plus"></i>
+
+            Generate Baru
+
+        </a>
+
+    </div>
+
+    <!-- ================= LAYOUT ================= -->
+    <div class="grid grid-cols-1 xl:grid-cols-[280px_minmax(0,1fr)] gap-6">
+
+        <!-- ================= SIDEBAR ================= -->
+        <div class="space-y-5 xl:sticky xl:top-6 self-start">
+
+            {% set first = history_detail[0] %}
+
+            <!-- WORKSPACE INFO -->
+            <div class="bg-white border border-slate-200 rounded-3xl p-5">
+
+                <p class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-5">
+                    Workspace Info
+                </p>
+
+                <div class="space-y-5">
+
+                    <div>
+
+                        <p class="text-xs text-slate-400 font-semibold mb-2">
+                            Keyword
+                        </p>
+
+                        <h2 class="font-bold text-slate-900 leading-relaxed break-words">
+                            {{ first.input_text }}
+                        </h2>
+
+                    </div>
+
+                    <div class="flex flex-wrap gap-2">
+
+                        <span class="px-3 py-1 rounded-xl bg-slate-100 text-slate-700 text-xs font-bold uppercase">
+                            {{ first.platform }}
+                        </span>
+
+                        {% if first.goal %}
+                        <span class="px-3 py-1 rounded-xl bg-orange-50 text-orange-600 text-xs font-bold uppercase">
+                            {{ first.goal }}
+                        </span>
+                        {% endif %}
+
+                    </div>
+
+                    <div class="space-y-3 pt-2 border-t border-slate-100">
+
+                        <div class="flex items-center justify-between text-sm">
+
+                            <span class="text-slate-500">
+                                Total Result
+                            </span>
+
+                            <span class="font-black text-slate-900">
+                                {{ history_detail|length }}
+                            </span>
+
+                        </div>
+
+                        <div class="flex items-center justify-between text-sm">
+
+                            <span class="text-slate-500">
+                                Dibuat
+                            </span>
+
+                            <span class="font-semibold text-slate-800">
+                                {{ first.timestamp.strftime('%d %b %Y') }}
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- GUIDE -->
+            <div class="bg-slate-50 border border-slate-200 rounded-3xl p-5">
+
+                <p class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4">
+                    Cara Membaca Score
+                </p>
+
+                <div class="space-y-4 text-sm text-slate-600">
+
+                    <div>
+
+                        <p class="font-bold text-slate-800">
+                            Similarity
+                        </p>
+
+                        <p class="mt-1 leading-relaxed">
+                            Tingkat relevansi keyword dengan tren.
+                        </p>
+
+                    </div>
+
+                    <div>
+
+                        <p class="font-bold text-slate-800">
+                            Growth
+                        </p>
+
+                        <p class="mt-1 leading-relaxed">
+                            Pertumbuhan tren saat ini.
+                        </p>
+
+                    </div>
+
+                    <div>
+
+                        <p class="font-bold text-slate-800">
+                            Opportunity
+                        </p>
+
+                        <p class="mt-1 leading-relaxed">
+                            Peluang topik untuk berkembang.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- ================= CONTENT ================= -->
+        <div class="min-w-0 space-y-5">
+
+            {% for item in history_detail %}
+
+            <div class="bg-white border border-slate-200 rounded-3xl overflow-hidden">
+
+                <!-- HEADER -->
+                <div class="p-6 border-b border-slate-100">
+
+                    <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-5">
+
+                        <!-- LEFT -->
+                        <div class="flex-1 min-w-0">
+
+                            <div class="flex flex-wrap gap-2 mb-4">
+
+                                <span class="px-3 py-1 rounded-xl bg-blue-50 text-blue-700 text-xs font-bold uppercase">
+                                    {{ item.platform }}
+                                </span>
+
+                                {% if item.category %}
+                                <span class="px-3 py-1 rounded-xl bg-emerald-50 text-emerald-700 text-xs font-bold">
+                                    {{ item.category }}
+                                </span>
+                                {% endif %}
+
+                                {% if item.trend_status %}
+                                <span class="px-3 py-1 rounded-xl bg-orange-50 text-orange-700 text-xs font-bold">
+                                    {{ item.trend_status }}
+                                </span>
+                                {% endif %}
+
+                            </div>
+
+                            <h2 class="text-2xl font-black text-slate-900 leading-snug break-words">
+
+                                {{ item.match_title }}
+
+                            </h2>
+
+                            {% if item.reasoning %}
+                            <p class="text-slate-500 mt-3 leading-relaxed text-sm break-words">
+
+                                {{ item.reasoning }}
+
+                            </p>
+                            {% endif %}
+
+                        </div>
+
+                        <!-- SCORE -->
+                        <div class="lg:text-right shrink-0">
+
+                            <p class="text-xs uppercase tracking-wider text-slate-400 font-bold">
+                                Final Score
+                            </p>
+
+                            <div class="mt-1 text-4xl font-black text-slate-900">
+
+                                {{ "%.2f"|format(item.final_score or 0) }}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- METRICS -->
+                <div class="grid grid-cols-2 lg:grid-cols-4 border-b border-slate-100">
+
+                    <div class="p-5 min-w-0">
+
+                        <p class="text-xs text-slate-400 font-bold uppercase">
+                            Similarity
+                        </p>
+
+                        <p class="mt-2 text-2xl font-black text-slate-900">
+                            {{ "%.2f"|format(item.cosine_score or 0) }}
+                        </p>
+
+                    </div>
+
+                    <div class="p-5 border-l border-slate-100 min-w-0">
+
+                        <p class="text-xs text-slate-400 font-bold uppercase">
+                            Growth
+                        </p>
+
+                        <p class="mt-2 text-2xl font-black text-slate-900">
+                            {{ "%.2f"|format(item.growth or 0) }}
+                        </p>
+
+                    </div>
+
+                    <div class="p-5 border-l border-slate-100 min-w-0">
+
+                        <p class="text-xs text-slate-400 font-bold uppercase">
+                            Opportunity
+                        </p>
+
+                        <p class="mt-2 text-2xl font-black text-slate-900">
+                            {{ "%.2f"|format(item.opportunity_index or 0) }}
+                        </p>
+
+                    </div>
+
+                    <div class="p-5 border-l border-slate-100 min-w-0">
+
+                        <p class="text-xs text-slate-400 font-bold uppercase">
+                            Density
+                        </p>
+
+                        <p class="mt-2 text-2xl font-black text-slate-900">
+                            {{ "%.2f"|format(item.density or 0) }}
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <!-- BODY -->
+                <div class="p-6 space-y-7">
+
+                    <!-- STRATEGY -->
+                    {% if item.strategy %}
+                    <div>
+
+                        <h3 class="font-bold text-slate-900 mb-3">
+                            Strategi Konten
+                        </h3>
+
+                        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5">
+
+                            <p class="text-slate-700 leading-relaxed break-words">
+                                {{ item.strategy }}
+                            </p>
+
+                        </div>
+
+                    </div>
+                    {% endif %}
+
+                    <!-- CAPTION -->
+                    {% if item.caption %}
+                    <div>
+
+                        <h3 class="font-bold text-slate-900 mb-3">
+                            Caption AI
+                        </h3>
+
+                        <div class="bg-slate-900 text-slate-200 rounded-2xl p-5 whitespace-pre-line leading-relaxed overflow-x-auto">
+
+                            {{ item.caption }}
+
+                        </div>
+
+                    </div>
+                    {% endif %}
+
+                    <!-- HASHTAG -->
+                    {% if item.hashtags %}
+                    <div>
+
+                        <h3 class="font-bold text-slate-900 mb-3">
+                            Hashtag
+                        </h3>
+
+                        <div class="flex flex-wrap gap-2">
+
+                            {% for tag in item.hashtags.split() %}
+
+                            <span class="px-3 py-2 rounded-xl bg-slate-100 text-slate-700 text-sm font-semibold break-all">
+                                {{ tag }}
+                            </span>
+
+                            {% endfor %}
+
+                        </div>
+
+                    </div>
+                    {% endif %}
+
+                    <!-- STORYBOARD -->
+                    {% if item.storyboard %}
+                    <div>
+
+                        <h3 class="font-bold text-slate-900 mb-4">
+                            Storyboard Konten
+                        </h3>
+
+                        <div class="space-y-4">
+
+                            {% for s in item.storyboard %}
+
+                            <div class="flex gap-4 bg-slate-50 border border-slate-200 rounded-2xl p-4">
+
+                                <!-- NUMBER -->
+                                <div class="w-10 h-10 shrink-0 rounded-xl bg-slate-900 text-white flex items-center justify-center font-black">
+
+                                    {{ loop.index }}
+
+                                </div>
+
+                                <!-- CONTENT -->
+                                <div class="min-w-0">
+
+                                    <p class="font-bold text-slate-900 break-words">
+
+                                        {{ s.scene }}
+
+                                    </p>
+
+                                    <p class="text-sm text-slate-600 mt-2 leading-relaxed break-words">
+
+                                        {{ s.text }}
+
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                    </div>
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

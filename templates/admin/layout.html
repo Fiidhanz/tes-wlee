@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Admin Control | TrendReco{% endblock %}</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background-color: #F8FAFC;
+        }
+        
+        /* Glassmorphism Sidebar */
+        .sidebar-blur {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(15px);
+            border-right: 1px solid rgba(226, 232, 240, 0.6);
+        }
+
+        /* Navigation Styling */
+        .nav-link {
+            position: relative;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            left: -1.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 5px;
+            height: 0%;
+            background: #2563eb;
+            border-radius: 0 5px 5px 0;
+            transition: height 0.3s ease;
+        }
+
+        .nav-link-active {
+            background: linear-gradient(90deg, #F1F5F9 0%, #FFFFFF 100%);
+            color: #2563eb !important;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+        }
+
+        .nav-link-active::before {
+            height: 60%;
+        }
+
+        .nav-link:hover:not(.nav-link-active) {
+            transform: translateX(8px);
+            color: #0f172a;
+        }
+
+        /* SweetAlert Custom UI */
+        .swal2-popup {
+            border-radius: 2.5rem !important;
+            padding: 2.5rem !important;
+            font-family: 'Plus Jakarta Sans', sans-serif !important;
+        }
+        .swal2-title {
+            font-weight: 800 !important;
+            color: #0f172a !important;
+        }
+        .swal2-confirm {
+            background-color: #ef4444 !important;
+            border-radius: 1.25rem !important;
+            font-weight: 800 !important;
+            text-transform: uppercase !important;
+            font-size: 0.75rem !important;
+            letter-spacing: 0.1em !important;
+            padding: 1rem 2.5rem !important;
+        }
+        .swal2-cancel {
+            background-color: #f1f5f9 !important;
+            color: #475569 !important;
+            border-radius: 1.25rem !important;
+            font-weight: 800 !important;
+            text-transform: uppercase !important;
+            font-size: 0.75rem !important;
+            letter-spacing: 0.1em !important;
+            padding: 1rem 2.5rem !important;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="text-slate-900 overflow-hidden">
+
+    <div class="flex h-screen w-full relative">
+        
+        <aside class="w-80 sidebar-blur flex flex-col h-full z-40 relative">
+            <div class="p-10">
+                <div class="flex items-center gap-3 group cursor-pointer">
+                    <div class="w-12 h-12 bg-slate-900 rounded-2xl flex items-center justify-center shadow-2xl shadow-slate-200 rotate-3 group-hover:rotate-0 transition-transform duration-500">
+                        <span class="text-white font-black text-2xl">T</span>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-[10px] font-black text-blue-600 uppercase tracking-[0.4em] leading-none mb-1">Admin Panel</span>
+                        <span class="text-2xl font-black text-slate-900 tracking-tighter italic">Trend<span class="text-blue-600">Reco.</span></span>
+                    </div>
+                </div>
+            </div>
+
+            <nav class="flex-1 px-6 space-y-1 overflow-y-auto pt-4">
+                <p class="px-4 text-[10px] font-extrabold text-slate-400 uppercase tracking-[0.3em] mb-4">Master Data</p>
+                
+                <a href="/admin/dashboard" class="nav-link flex items-center gap-4 px-5 py-3.5 text-slate-500 rounded-2xl {% if request.path == '/admin/dashboard' %}nav-link-active{% endif %}">
+                    <div class="w-9 h-9 flex items-center justify-center rounded-xl bg-white shadow-sm border border-slate-100">
+                        <i class="fa-solid fa-house-chimney text-sm"></i>
+                    </div>
+                    <span class="text-sm font-bold tracking-tight">Dashboard Overview</span>
+                </a>
+
+                <a href="/admin/upload" class="nav-link flex items-center gap-4 px-5 py-3.5 text-slate-500 rounded-2xl {% if request.path == '/admin/upload' %}nav-link-active{% endif %}">
+                    <div class="w-9 h-9 flex items-center justify-center rounded-xl bg-white shadow-sm border border-slate-100">
+                        <i class="fa-solid fa-cloud-arrow-up text-sm"></i>
+                    </div>
+                    <span class="text-sm font-bold tracking-tight">Upload Dataset</span>
+                </a>
+
+                <a href="/admin/pre-processing" class="nav-link flex items-center gap-4 px-5 py-3.5 text-slate-500 rounded-2xl {% if request.path == '/admin/pre-processing' %}nav-link-active{% endif %}">
+                    <div class="w-9 h-9 flex items-center justify-center rounded-xl bg-white shadow-sm border border-slate-100">
+                        <i class="fa-solid fa-microchip text-sm"></i>
+                    </div>
+                    <span class="text-sm font-bold tracking-tight">Pre-Processing</span>
+                </a>
+
+                <a href="/admin/embedding" class="nav-link flex items-center gap-4 px-5 py-3.5 text-slate-500 rounded-2xl {% if request.path == '/admin/embedding' %}nav-link-active{% endif %}">
+                    <div class="w-9 h-9 flex items-center justify-center rounded-xl bg-white shadow-sm border border-slate-100">
+                        <i class="fa-solid fa-wand-magic-sparkles text-sm"></i>
+                    </div>
+                    <span class="text-sm font-bold tracking-tight">AI Embedding</span>
+                </a>
+
+                <a href="/admin/similarity" class="nav-link flex items-center gap-4 px-5 py-3.5 text-slate-500 rounded-2xl {% if request.path == '/admin/similarity' %}nav-link-active{% endif %}">
+                    <div class="w-9 h-9 flex items-center justify-center rounded-xl bg-white shadow-sm border border-slate-100">
+                        <i class="fa-solid fa-arrows-left-right text-sm"></i>
+                    </div>
+                    <span class="text-sm font-bold tracking-tight">Similarity Analysis</span>
+                </a>
+
+                <a href="/admin/trend-growth" class="nav-link flex items-center gap-4 px-5 py-3.5 text-slate-500 rounded-2xl {% if request.path == '/admin/trend-growth' %}nav-link-active{% endif %}">
+                    <div class="w-9 h-9 flex items-center justify-center rounded-xl bg-white shadow-sm border border-slate-100">
+                        <i class="fa-solid fa-chart-line text-sm"></i>
+                    </div>
+                    <span class="text-sm font-bold tracking-tight">Trend Growth</span>
+                </a>
+
+                <a href="/admin/content-density" class="nav-link flex items-center gap-4 px-5 py-3.5 text-slate-500 rounded-2xl {% if request.path == '/admin/content-density' %}nav-link-active{% endif %}">
+                    <div class="w-9 h-9 flex items-center justify-center rounded-xl bg-white shadow-sm border border-slate-100">
+                        <i class="fa-solid fa-layer-group text-sm"></i>
+                    </div>
+                    <span class="text-sm font-bold tracking-tight">Content Density</span>
+                </a>
+
+                <a href="/admin/opportunity" class="nav-link flex items-center gap-4 px-5 py-3.5 text-slate-500 rounded-2xl {% if request.path == '/admin/opportunity' %}nav-link-active{% endif %}">
+                    <div class="w-9 h-9 flex items-center justify-center rounded-xl bg-white shadow-sm border border-slate-100">
+                        <i class="fa-solid fa-lightbulb text-sm"></i>
+                    </div>
+                    <span class="text-sm font-bold tracking-tight">Opportunity Index</span>
+                </a>
+
+                <div class="pt-8 pb-2">
+                    <p class="px-4 text-[10px] font-extrabold text-slate-400 uppercase tracking-[0.3em] mb-4">System Management</p>
+                </div>
+
+                <a href="/admin/users" class="nav-link flex items-center gap-4 px-5 py-4 text-slate-500 rounded-2xl {% if request.path == '/admin/users' %}nav-link-active{% endif %}">
+                    <div class="w-9 h-9 flex items-center justify-center rounded-xl bg-white shadow-sm border border-slate-100">
+                        <i class="fa-solid fa-users-gear text-sm"></i>
+                    </div>
+                    <span class="text-sm font-bold tracking-tight">Kelola User</span>
+                </a>
+
+                <a href="/admin/logs" class="nav-link flex items-center gap-4 px-5 py-4 text-slate-500 rounded-2xl {% if request.path == '/admin/logs' %}nav-link-active{% endif %}">
+                    <div class="w-9 h-9 flex items-center justify-center rounded-xl bg-white shadow-sm border border-slate-100">
+                        <i class="fa-solid fa-fingerprint text-sm"></i>
+                    </div>
+                    <span class="text-sm font-bold tracking-tight">Log Activity</span>
+                </a>
+            </nav>
+
+            <div class="p-6 mt-auto">
+                <a href="javascript:void(0)" onclick="confirmLogout()" class="group flex items-center justify-between px-6 py-4 bg-slate-50 hover:bg-red-50 rounded-2xl transition-all duration-300 border border-slate-100 hover:border-red-100">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 flex items-center justify-center bg-white rounded-lg shadow-sm group-hover:text-red-600 transition-colors">
+                            <i class="fa-solid fa-power-off text-xs"></i>
+                        </div>
+                        <span class="text-xs font-black text-slate-500 group-hover:text-red-600 transition-colors uppercase tracking-[0.15em]">Sign Out</span>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-[10px] text-slate-300 group-hover:text-red-300 transition-colors translate-x-0 group-hover:translate-x-1 transition-transform"></i>
+                </a>
+                
+                <div class="mt-6 text-center">
+                    <p class="text-[9px] font-black text-slate-300 uppercase tracking-[0.3em]">Build v1.0.4-Stable</p>
+                </div>
+            </div>
+        </aside>
+
+        <main class="flex-1 flex flex-col min-w-0 h-full relative overflow-hidden">
+            
+            <header class="h-24 px-12 flex items-center justify-between sticky top-0 z-30 bg-white/60 backdrop-blur-md border-b border-white/80 shadow-sm">
+                <div class="flex flex-col">
+                    <h2 class="text-2xl font-black text-slate-900 tracking-tight">{% block page_title %}{% endblock %}</h2>
+                    <div class="flex items-center gap-2 mt-1">
+                        <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">System Engine: Active</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-8">
+                    <div class="h-8 w-[1px] bg-slate-200"></div>
+
+                    <div class="flex items-center gap-4 bg-white/80 p-1.5 pr-6 rounded-2xl shadow-sm border border-slate-50">
+                        <div class="w-11 h-11 bg-gradient-to-tr from-slate-900 to-slate-700 rounded-xl flex items-center justify-center text-white shadow-lg">
+                            <i class="fa-solid fa-user-shield text-sm"></i>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-xs font-black text-slate-900 leading-none">Super Admin</span>
+                            <span class="text-[9px] font-bold text-blue-500 uppercase tracking-tighter mt-1.5 px-2 py-0.5 bg-blue-50 rounded-md">Authorized</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="flex-1 overflow-y-auto bg-[#F8FAFC]">
+                <div class="max-w-7xl mx-auto p-12 fade-in">
+                    {% block content %}{% endblock %}
+                </div>
+            </div>
+
+            <div class="absolute bottom-[-10%] right-[-5%] w-[500px] h-[500px] bg-blue-100/20 rounded-full blur-[120px] -z-10 pointer-events-none"></div>
+        </main>
+
+    </div>
+
+    <script>
+        function confirmLogout() {
+            Swal.fire({
+                title: 'Yakin ingin keluar?',
+                text: "Sesi Anda akan berakhir dan semua pekerjaan yang belum disimpan mungkin hilang.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#f1f5f9',
+                confirmButtonText: 'YA, LOGOUT SEKARANG',
+                cancelButtonText: 'BATAL',
+                reverseButtons: true,
+                background: '#ffffff',
+                backdrop: `rgba(15, 23, 42, 0.2) blur(8px)`
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Logging out...',
+                        timer: 800,
+                        showConfirmButton: false,
+                        didOpen: () => {
+                            Swal.showLoading()
+                        }
+                    }).then(() => {
+                        window.location.href = "/logout";
+                    });
+                }
+            })
+        }
+    </script>
+</body>
+</html>

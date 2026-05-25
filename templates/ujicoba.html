@@ -1,0 +1,64 @@
+<form method="POST">
+    <input name="keyword" placeholder="Topik">
+    
+    <select name="platform">
+        <option value="tiktok">TikTok</option>
+        <option value="instagram">Instagram</option>
+        <option value="youtube">YouTube</option>
+    </select>
+
+    <select name="goal">
+        <option value="edukasi">Edukasi</option>
+        <option value="hiburan">Hiburan</option>
+        <option value="promosi">Promosi</option>
+    </select>
+
+    <button type="submit">Proses</button>
+</form>
+
+{% if result %}
+    <h2>🔥 Rekomendasi Tren & Konten</h2>
+
+    {% for r in result %}
+        <div style="border:1px solid #ccc; padding:15px; margin:10px;">
+            
+            <h3>{{ r.query }}</h3>
+
+            <p><b>Similarity:</b> {{ "%.2f"|format(r.sim) }}</p>
+            <p><b>Trend Growth:</b> {{ "%.2f"|format(r.growth) }}</p>
+            <p><b>Content Density:</b> {{ "%.2f"|format(r.density) }}</p>
+            <p><b>Opportunity Index:</b> {{ "%.2f"|format(r.oi) }}</p>
+            <p><b>Final Score:</b> {{ "%.2f"|format(r.score) }}</p>
+
+            <p><b>Status:</b> 
+                {% if r.oi > 0.5 %}
+                    🔥 High Opportunity
+                {% elif r.oi > 0.2 %}
+                    🌱 Emerging Trend
+                {% else %}
+                    ⚠️ Competitive
+                {% endif %}
+            </p>
+
+            <p><b>Alasan:</b>
+                Tren ini direkomendasikan karena memiliki similarity tinggi,
+                pertumbuhan tren yang {{ "meningkat" if r.growth > 0 else "stabil" }},
+                serta tingkat persaingan konten yang 
+                {{ "rendah" if r.density < 1 else "tinggi" }}.
+            </p>
+
+            <h4>🎯 Judul:</h4>
+<p>{{ r.title }}</p>
+
+<h4>📝 Caption:</h4>
+<p>{{ r.caption }}</p>
+
+<h4>#️⃣ Hashtag:</h4>
+<p>{{ r.hashtags }}</p>
+
+<h4>📊 Strategi:</h4>
+<p>{{ r.strategy }}</p>
+
+        </div>
+    {% endfor %}
+{% endif %}

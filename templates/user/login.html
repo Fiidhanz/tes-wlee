@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | TrendReco. </title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .hero-gradient {
+            background: radial-gradient(circle at 100% 0%, #eff6ff 0%, #ffffff 50%, #f8fafc 100%);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+        @keyframes subtle-float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+        .animate-float { animation: subtle-float 6s ease-in-out infinite; }
+    </style>
+</head>
+<body class="hero-gradient h-screen overflow-hidden text-slate-900">
+
+    <div class="flex h-full w-full">
+        <div class="w-full lg:w-[40%] flex flex-col justify-center px-12 lg:px-20 bg-white shadow-[20px_0_50px_rgba(0,0,0,0.02)] z-20 relative">
+            
+            <div class="absolute top-12 left-12 lg:left-20 flex items-center gap-2">
+                <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-200">
+                    <span class="text-white font-bold text-sm">T</span>
+                </div>
+                <span class="text-xl font-black tracking-tighter">Trend<span class="text-blue-600">Reco.</span></span>
+            </div>
+
+            <div class="max-w-sm w-full mx-auto">
+                <div class="mb-10">
+                    <h1 class="text-4xl font-black text-slate-900 tracking-tight mb-2">Welcome Back.</h1>
+                    <p class="text-slate-500 font-medium">Silahkan masuk untuk melanjutkan analisis.</p>
+                </div>
+
+                {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="mb-6 p-4 rounded-2xl text-[11px] font-bold uppercase tracking-wider flex items-center gap-3
+        {{ 'bg-red-50 text-red-500 border border-red-100' if category == 'danger' else 'bg-emerald-50 text-emerald-600 border border-emerald-100' }}">
+        <i class="fa-solid {{ 'fa-circle-xmark' if category == 'danger' else 'fa-circle-check' }} text-base"></i>
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+<!-- INFO AKUN DUMMY -->
+<div class="mb-6 bg-blue-50 border border-blue-100 rounded-2xl p-4">
+    <div class="flex items-start gap-3">
+        <div class="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center text-white">
+            <i class="fa-solid fa-user-shield text-sm"></i>
+        </div>
+
+        <div class="flex-1">
+            <p class="text-[10px] font-black uppercase tracking-[0.2em] text-blue-600 mb-2">
+                Akun Uji Coba
+            </p>
+
+            <div class="space-y-1">
+                <p class="text-sm font-semibold text-slate-700">
+                    Email :
+                    <span class="text-slate-900">user@trendreco.com</span>
+                </p>
+
+                <p class="text-sm font-semibold text-slate-700">
+                    Password :
+                    <span class="text-slate-900">password123</span>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+                <form action="{{ url_for('login') }}" method="POST" class="space-y-6">
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">Email Address</label>
+                        <input type="email" name="email" required
+                            class="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all font-medium"
+                            placeholder="nama@email.com">
+                    </div>
+
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center px-1">
+                            <label class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Password</label>
+                            <a href="#" class="text-[10px] font-bold text-blue-600 hover:underline">Lupa Password?</a>
+                        </div>
+                        <div class="relative group">
+                            <input type="password" id="password" name="password" required
+                                class="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all font-medium pr-14"
+                                placeholder="••••••••">
+                            
+                            <button type="button" onclick="togglePassword()" 
+                                class="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center text-slate-400 hover:text-blue-600 transition-colors focus:outline-none">
+                                <i id="eye-icon" class="fa-solid fa-eye-slash text-sm"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <button type="submit" 
+                        class="w-full py-5 bg-slate-900 hover:bg-blue-600 text-white rounded-2xl font-bold text-sm shadow-xl shadow-slate-200 hover:shadow-blue-200 transition-all duration-300 transform active:scale-[0.98] mt-4">
+                        Masuk Ke Dashboard
+                    </button>
+                </form>
+
+                <div class="mt-10 text-center">
+                    <p class="text-sm font-semibold text-slate-400">
+                        Belum punya akun? 
+                        <a href="{{ url_for('register') }}" class="text-blue-600 hover:text-blue-700 underline decoration-2 underline-offset-4">Daftar Sekarang</a>
+                    </p>
+                </div>
+            </div>
+
+            <div class="absolute bottom-12 left-0 w-full text-center">
+                <p class="text-[10px] font-bold text-slate-300 uppercase tracking-widest">© 2026 Content Recomendation Engine</p>
+            </div>
+        </div>
+
+        <div class="hidden lg:flex w-[60%] relative flex-col items-center justify-center p-20">
+            <div class="absolute top-[10%] right-[10%] w-64 h-64 bg-blue-200/30 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-[10%] left-[10%] w-96 h-96 bg-indigo-200/20 rounded-full blur-3xl"></div>
+
+            <div class="relative z-10 text-center animate-float">
+                <div class="mb-8 inline-block px-6 py-2 bg-white/50 border border-white rounded-full shadow-sm backdrop-blur-sm">
+                    <span class="text-[10px] font-black text-blue-600 uppercase tracking-[0.3em]">Next-Gen Content Planner</span>
+                </div>
+                
+                <h2 class="text-[8rem] font-black text-slate-900 leading-none tracking-tighter mb-6 italic">
+                    Trend<span class="text-blue-600">Reco.</span>
+                </h2>
+                
+                <div class="max-w-lg mx-auto">
+                    <p class="text-3xl font-bold text-slate-600 leading-snug tracking-tight">
+                        Trend-based <span class="text-slate-900">Content Recommendation</span> System for Social Media.
+                    </p>
+                </div>
+
+                <div class="mt-16 glass-card p-6 rounded-[2rem] shadow-2xl max-w-sm mx-auto flex items-center gap-4 text-left border border-white/50">
+                    <div class="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-200">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Status</p>
+                        <p class="text-sm font-bold text-slate-800 tracking-tight">AI Engine is analyzing 2.4k trends...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const eyeIcon = document.getElementById('eye-icon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                eyeIcon.classList.remove('fa-eye-slash');
+                eyeIcon.classList.add('fa-eye');
+            } else {
+                passwordInput.type = 'password';
+                eyeIcon.classList.remove('fa-eye');
+                eyeIcon.classList.add('fa-eye-slash');
+            }
+        }
+    </script>
+
+</body>
+</html>

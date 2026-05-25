@@ -1,0 +1,638 @@
+{% extends "user/layout.html" %}
+
+{% block title %}Strategy Generator | TrendReco{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div class="max-w-6xl mx-auto space-y-8 animate-entrance">
+
+   
+
+    <!-- CONFIG -->
+    <div class="bg-white border border-slate-200 rounded-[2.5rem] p-8 md:p-10 shadow-sm">
+
+        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 mb-8">
+
+            <div>
+                <h2 class="text-2xl font-black text-slate-900">
+                    Generator Configuration
+                </h2>
+
+                <p class="text-sm text-slate-500 mt-2">
+                    Pilih metode input yang ingin digunakan untuk menghasilkan strategi konten.
+                </p>
+            </div>
+
+            <div class="flex p-1.5 bg-slate-100 rounded-2xl w-full lg:w-auto">
+
+                <button
+                    onclick="switchTab('structured')"
+                    id="tab-struct"
+                    class="flex-1 lg:px-8 py-3 text-xs font-black uppercase tracking-wider rounded-xl transition-all duration-300 {% if not is_prompt %}bg-white text-blue-600 shadow-sm{% else %}text-slate-500{% endif %}"
+                >
+                    <i class="fa-solid fa-list-check mr-2"></i>
+                    Form Mode
+                </button>
+
+                <button
+                    onclick="switchTab('prompt')"
+                    id="tab-prompt"
+                    class="flex-1 lg:px-8 py-3 text-xs font-black uppercase tracking-wider rounded-xl transition-all duration-300 {% if is_prompt %}bg-white text-indigo-600 shadow-sm{% else %}text-slate-500{% endif %}"
+                >
+                    <i class="fa-solid fa-wand-magic-sparkles mr-2"></i>
+                    Smart Prompt
+                </button>
+
+            </div>
+        </div>
+
+        <!-- FORM MODE -->
+        <form
+            id="form-structured"
+            action="/user/generate"
+            method="POST"
+            class="{% if is_prompt %}hidden{% endif %} grid grid-cols-1 md:grid-cols-3 gap-6"
+        >
+
+            <div class="space-y-2 md:col-span-1">
+
+                <label class="text-sm font-bold text-slate-700">
+                    Topik Konten
+                </label>
+
+                <div class="relative">
+
+                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+
+                    <input
+                        type="text"
+                        name="keyword"
+                        placeholder="Contoh: Edukasi Saham"
+                        required
+                        class="w-full pl-11 pr-4 py-4 rounded-2xl bg-slate-50 border border-slate-200 focus:border-blue-500 focus:bg-white outline-none transition-all font-semibold text-slate-700"
+                    >
+
+                </div>
+            </div>
+
+            <div class="space-y-2">
+
+                <label class="text-sm font-bold text-slate-700">
+                    Platform
+                </label>
+
+                <select
+                    name="platform"
+                    class="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-200 focus:border-blue-500 outline-none font-semibold text-slate-700 appearance-none"
+                >
+                    <option value="tiktok">TikTok Video</option>
+                    <option value="instagram">Instagram Reels</option>
+                    <option value="youtube">YouTube Shorts</option>
+                </select>
+
+            </div>
+
+            <div class="space-y-2">
+
+                <label class="text-sm font-bold text-slate-700">
+                    Tujuan Konten
+                </label>
+
+                <select
+                    name="goal"
+                    class="w-full px-5 py-4 rounded-2xl bg-slate-50 border border-slate-200 focus:border-blue-500 outline-none font-semibold text-slate-700 appearance-none"
+                >
+<option value="teknologi">Teknologi & Gadget</option>
+<option value="hiburan">Hiburan & Komedi</option>
+<option value="edukasi">Edukasi & Tutorial</option>
+<option value="fashion">Fashion & Beauty</option>
+<option value="kuliner">Kuliner / Food & Beverage</option>
+<option value="lifestyle">Travel & Lifestyle</option>
+                </select>
+
+            </div>
+
+            <div class="md:col-span-3 pt-2">
+
+                <button
+                    type="submit"
+                    class="w-full bg-slate-900 hover:bg-blue-600 text-white py-5 rounded-2xl font-black tracking-[0.15em] transition-all flex items-center justify-center gap-3"
+                >
+                    GENERATE STRATEGY
+                    <i class="fa-solid fa-bolt-lightning"></i>
+                </button>
+
+            </div>
+        </form>
+
+        <!-- SMART PROMPT -->
+        <form
+            id="form-prompt"
+            action="/user/generate"
+            method="POST"
+            class="{% if not is_prompt %}hidden{% endif %} space-y-6"
+        >
+
+            <div class="space-y-3">
+
+                <label class="text-sm font-bold text-slate-700">
+                    Smart Prompt Input
+                </label>
+
+                <textarea
+                    name="user_prompt"
+                    rows="5"
+                    placeholder="Contoh: Saya ingin membuat konten TikTok tentang AI untuk mahasiswa dengan gaya edukatif dan mudah viral."
+                    class="w-full p-6 rounded-[1.5rem] bg-slate-50 border border-slate-200 focus:border-indigo-500 focus:bg-white outline-none transition-all font-semibold text-slate-700 resize-none leading-relaxed"
+                ></textarea>
+
+            </div>
+
+            <button
+                type="submit"
+                class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-5 rounded-2xl font-black tracking-[0.15em] transition-all flex items-center justify-center gap-3"
+            >
+                ANALYZE WITH AI
+                <i class="fa-solid fa-wand-sparkles"></i>
+            </button>
+
+        </form>
+    </div>
+
+    <!-- RESULT -->
+    {% if result %}
+
+    <!-- CHART -->
+    <div class="bg-white border border-slate-200 rounded-[2.5rem] p-8 shadow-sm">
+
+        <div class="flex items-center justify-between mb-8">
+
+            <div>
+                <h3 class="text-xl font-black text-slate-900">
+                    Analisis Skor Rekomendasi
+                </h3>
+
+                <p class="text-sm text-slate-500 mt-1">
+                    Perbandingan performa antar topik rekomendasi.
+                </p>
+            </div>
+
+            <div class="w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600 text-xl">
+                <i class="fa-solid fa-chart-column"></i>
+            </div>
+
+        </div>
+
+        <div class="h-80">
+            <canvas id="rankingChart"></canvas>
+        </div>
+
+    </div>
+
+    <!-- RESULT CARDS -->
+    <div class="space-y-8">
+
+        {% for r in result %}
+
+        <div class="bg-white border border-slate-200 rounded-[2.5rem] overflow-hidden shadow-sm">
+
+            <!-- HEADER -->
+            <div class="p-8 border-b border-slate-100">
+
+                <div class="flex flex-col lg:flex-row justify-between gap-6">
+
+                    <div>
+
+                        <div class="flex flex-wrap gap-3 mb-5">
+
+                            {% if is_prompt %}
+                            <span class="px-4 py-2 bg-indigo-100 text-indigo-700 rounded-xl text-xs font-black">
+                                🤖 AI Generated
+                            </span>
+                            {% endif %}
+
+                            <!-- NEW -->
+                            {% if r.category %}
+                            <span class="px-4 py-2 bg-emerald-100 text-emerald-700 rounded-xl text-xs font-black">
+                                {{ r.category }}
+                            </span>
+                            {% endif %}
+
+                            <span class="px-4 py-2 bg-blue-50 text-blue-700 rounded-xl text-xs font-black">
+                                {{ r.category if r.category else detected_category }}
+                            </span>
+
+                            <span class="px-4 py-2 bg-slate-100 text-slate-700 rounded-xl text-xs font-bold">
+                                {{ r.query }}
+                            </span>
+
+                            <!-- NEW -->
+                            {% if r.content_angle %}
+                            <span class="px-4 py-2 bg-orange-100 text-orange-700 rounded-xl text-xs font-black">
+                                {{ r.content_angle }}
+                            </span>
+                            {% endif %}
+
+                        </div>
+
+                        <h2 class="text-3xl font-black text-slate-900 leading-tight">
+                            {{ r.title }}
+                        </h2>
+
+                    </div>
+
+                    <div class="bg-slate-50 rounded-3xl px-8 py-6 border border-slate-200 min-w-[220px]">
+
+                        <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-2">
+                            Recommendation Score
+                        </p>
+
+                        <p class="text-5xl font-black text-blue-600">
+                            {{ "%.2f"|format(r.score) }}
+                        </p>
+
+                        <p class="text-sm text-slate-500 mt-2">
+                            Semakin tinggi skor, semakin potensial untuk dijadikan konten.
+                        </p>
+
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- METRIC -->
+            <div class="grid grid-cols-2 lg:grid-cols-6 gap-4 p-8 bg-slate-50 border-b border-slate-100">
+
+                <div class="bg-white rounded-2xl p-5 border border-slate-100">
+                    <p class="text-xs font-black text-slate-400 uppercase mb-2">
+                        Similarity
+                    </p>
+                    <p class="text-2xl font-black text-slate-800">
+                        {{ "%.2f"|format(r.sim) }}
+                    </p>
+                </div>
+
+                <div class="bg-white rounded-2xl p-5 border border-slate-100">
+                    <p class="text-xs font-black text-slate-400 uppercase mb-2">
+                        Growth
+                    </p>
+                    <p class="text-2xl font-black text-slate-800">
+                        {{ "%.2f"|format(r.growth_val) }}
+                    </p>
+
+                    <!-- NEW -->
+                    {% if r.trend_status %}
+                    <p class="text-xs mt-2 font-bold text-blue-600">
+                        {{ r.trend_status }}
+                    </p>
+                    {% endif %}
+                </div>
+
+                <div class="bg-white rounded-2xl p-5 border border-slate-100">
+                    <p class="text-xs font-black text-slate-400 uppercase mb-2">
+                        Density
+                    </p>
+                    <p class="text-2xl font-black text-slate-800">
+                        {{ "%.2f"|format(r.density) }}
+                    </p>
+                </div>
+
+                <div class="bg-white rounded-2xl p-5 border border-slate-100">
+                    <p class="text-xs font-black text-slate-400 uppercase mb-2">
+                        Opportunity
+                    </p>
+                    <p class="text-2xl font-black text-green-600">
+                        {{ "%.2f"|format(r.oi) }}
+                    </p>
+
+                    <!-- NEW -->
+                    {% if r.opportunity_label %}
+                    <p class="text-xs mt-2 font-bold text-green-600">
+                        {{ r.opportunity_label }}
+                    </p>
+                    {% endif %}
+                </div>
+
+                <!-- NEW -->
+                <div class="bg-white rounded-2xl p-5 border border-slate-100">
+                    <p class="text-xs font-black text-slate-400 uppercase mb-2">
+                        Platform
+                    </p>
+
+                    <p class="text-xl font-black text-indigo-600 capitalize">
+                        {{ r.platform if r.platform else "-" }}
+                    </p>
+                </div>
+                <div class="bg-white rounded-2xl p-5 border border-slate-100">
+    <p class="text-xs font-black text-slate-400 uppercase mb-2">
+        Preference
+    </p>
+
+    <p class="text-2xl font-black text-purple-600">
+        {{ "%.2f"|format(r.get('preference_score', 0)) }}
+    </p>
+
+    <p class="text-xs mt-2 text-slate-500">
+        Skor penyesuaian berdasarkan tujuan konten.
+    </p>
+</div>
+
+            </div>
+
+            <!-- BODY -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 p-8">
+
+                <!-- STORYBOARD -->
+                <div>
+
+                    <div class="flex items-center gap-3 mb-6">
+
+                        <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600">
+                            <i class="fa-solid fa-film"></i>
+                        </div>
+
+                        <div>
+                            <h4 class="font-black text-slate-900">
+                                Alur Konten
+                            </h4>
+
+                            <p class="text-sm text-slate-500">
+                                Struktur isi video yang direkomendasikan.
+                            </p>
+                        </div>
+
+                    </div>
+
+                    <div class="space-y-5">
+
+                        {% for s in r.storyboard %}
+
+                        <div class="flex gap-4">
+
+                            <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center font-black text-slate-600 shrink-0">
+                                {{ loop.index }}
+                            </div>
+
+                            <div class="bg-slate-50 rounded-2xl p-5 w-full">
+
+                                <p class="text-xs font-black text-blue-600 uppercase mb-2">
+                                    {{ s.scene }}
+                                </p>
+
+                                <p class="text-sm text-slate-700 leading-relaxed">
+                                    {{ s.text }}
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+                <!-- RIGHT SIDE -->
+                <div class="space-y-6">
+
+                    <!-- CAPTION -->
+                    <div class="bg-slate-900 rounded-[2rem] p-8 text-white relative overflow-hidden">
+
+                        <div class="absolute top-0 right-0 opacity-10 p-6">
+                            <i class="fa-solid fa-quote-right text-6xl"></i>
+                        </div>
+
+                        <h4 class="text-sm font-black uppercase tracking-widest text-blue-400 mb-5">
+                            Caption Rekomendasi
+                        </h4>
+
+                        <p class="leading-relaxed relative z-10 whitespace-pre-line">
+                            {{ r.caption }}
+                        </p>
+
+                        <div class="mt-6 pt-5 border-t border-white/10 text-sm text-blue-300 font-semibold break-words">
+                            {{ r.hashtags }}
+                        </div>
+
+                    </div>
+
+                    <!-- NEW : STRATEGY -->
+                    {% if r.strategy %}
+                    <div class="bg-purple-50 border border-purple-100 rounded-[2rem] p-8">
+
+                        <div class="flex items-center gap-3 mb-4">
+
+                            <div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-purple-600">
+                                <i class="fa-solid fa-chess"></i>
+                            </div>
+
+                            <div>
+                                <h4 class="font-black text-slate-900">
+                                    Strategi Eksekusi
+                                </h4>
+
+                                <p class="text-sm text-slate-500">
+                                    Strategi penyajian konten berdasarkan kategori.
+                                </p>
+                            </div>
+
+                        </div>
+
+                        <p class="text-sm text-slate-700 leading-loose">
+                            {{ r.strategy }}
+                        </p>
+
+                    </div>
+                    {% endif %}
+
+                    <!-- REASON -->
+                    <div class="bg-blue-50 border border-blue-100 rounded-[2rem] p-8">
+
+                        <div class="flex items-center gap-3 mb-4">
+
+                            <div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-blue-600">
+                                <i class="fa-solid fa-lightbulb"></i>
+                            </div>
+
+                            <div>
+                                <h4 class="font-black text-slate-900">
+                                    Alasan Strategi
+                                </h4>
+
+                                <p class="text-sm text-slate-500">
+                                    Penjelasan mengapa konten ini direkomendasikan.
+                                </p>
+                            </div>
+
+                        </div>
+
+                        <p class="text-sm text-slate-700 leading-loose">
+                            {{ r.reasoning if r.reasoning else r.reason if r.reason else "Strategi ini dipilih karena memiliki peluang tinggi berdasarkan kombinasi kemiripan topik, pertumbuhan tren, dan tingkat persaingan konten." }}
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+    {% else %}
+
+    <!-- EMPTY -->
+    <div class="bg-white border border-slate-200 rounded-[3rem] py-24 px-10 text-center">
+
+        <div class="w-28 h-28 rounded-[2rem] bg-slate-100 flex items-center justify-center mx-auto mb-8 text-slate-300 text-5xl">
+            <i class="fa-solid fa-rocket"></i>
+        </div>
+
+        <h3 class="text-3xl font-black text-slate-900">
+            Belum Ada Analisis
+        </h3>
+
+        <p class="text-slate-500 mt-4 max-w-lg mx-auto leading-relaxed">
+            Masukkan topik atau prompt untuk mendapatkan rekomendasi strategi konten berbasis AI.
+        </p>
+
+    </div>
+
+    {% endif %}
+</div>
+
+<script>
+
+function switchTab(tab) {
+
+    const structForm = document.getElementById('form-structured');
+    const promptForm = document.getElementById('form-prompt');
+
+    const structBtn = document.getElementById('tab-struct');
+    const promptBtn = document.getElementById('tab-prompt');
+
+    if (tab === 'structured') {
+
+        structForm.classList.remove('hidden');
+        promptForm.classList.add('hidden');
+
+        structBtn.classList.add('bg-white', 'text-blue-600', 'shadow-sm');
+        structBtn.classList.remove('text-slate-500');
+
+        promptBtn.classList.remove('bg-white', 'text-indigo-600', 'shadow-sm');
+        promptBtn.classList.add('text-slate-500');
+
+    } else {
+
+        structForm.classList.add('hidden');
+        promptForm.classList.remove('hidden');
+
+        promptBtn.classList.add('bg-white', 'text-indigo-600', 'shadow-sm');
+        promptBtn.classList.remove('text-slate-500');
+
+        structBtn.classList.remove('bg-white', 'text-blue-600', 'shadow-sm');
+        structBtn.classList.add('text-slate-500');
+    }
+}
+
+{% if result %}
+
+const ctx = document.getElementById('rankingChart').getContext('2d');
+
+new Chart(ctx, {
+
+    type: 'bar',
+
+    data: {
+
+        labels: [{% for r in result %}"{{ r.query }}",{% endfor %}],
+
+        datasets: [{
+
+            label: 'Recommendation Score',
+
+            data: [{% for r in result %}{{ r.score }},{% endfor %}],
+
+            backgroundColor: 'rgba(37, 99, 235, 0.08)',
+            borderColor: '#2563eb',
+            borderWidth: 2,
+            borderRadius: 14,
+            hoverBackgroundColor: '#2563eb'
+
+        }]
+    },
+
+    options: {
+
+        responsive: true,
+        maintainAspectRatio: false,
+
+        plugins: {
+            legend: {
+                display: false
+            }
+        },
+
+        scales: {
+
+            y: {
+                beginAtZero: true,
+                grid: {
+                    color: '#F1F5F9'
+                },
+                ticks: {
+                    color: '#64748B'
+                }
+            },
+
+            x: {
+                grid: {
+                    display: false
+                },
+                ticks: {
+                    color: '#334155'
+                }
+            }
+        }
+    }
+});
+
+{% endif %}
+
+</script>
+
+<style>
+
+select {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 1rem center;
+    background-repeat: no-repeat;
+    background-size: 1.1em 1.1em;
+}
+
+.animate-entrance {
+    animation: slideUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes slideUp {
+
+    from {
+        opacity: 0;
+        transform: translateY(25px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+</style>
+
+{% endblock %}

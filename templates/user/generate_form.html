@@ -1,0 +1,633 @@
+{% extends "user/layout.html" %}
+
+{% block title %}Generate Konten AI | TrendReco{% endblock %}
+
+{% block content %}
+
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+
+<div class="max-w-4xl mx-auto">
+
+    <!-- ========================= -->
+    <!-- HEADER -->
+    <!-- ========================= -->
+    <div class="mb-6">
+
+        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-blue-50 text-blue-600 text-xs font-bold">
+
+            <i class="fa-solid fa-sparkles"></i>
+            AI Content Generator
+
+        </div>
+
+        <h1 class="mt-4 text-3xl font-black text-slate-900 leading-tight">
+
+            Buat Ide Konten dengan Bantuan AI
+
+        </h1>
+
+        <p class="mt-3 text-slate-500 leading-relaxed max-w-2xl">
+
+            Masukkan topik atau ide konten yang ingin kamu buat.
+            AI akan membantu memberikan rekomendasi konten,
+            strategi platform, caption, hashtag, dan storyboard otomatis.
+
+        </p>
+
+    </div>
+
+    <!-- ========================= -->
+    <!-- MAIN CARD -->
+    <!-- ========================= -->
+    <div class="bg-white border border-slate-200 rounded-[2rem] shadow-sm overflow-hidden">
+
+        <!-- TAB -->
+        <div class="border-b border-slate-100 p-5">
+
+            <div class="flex bg-slate-100 p-1 rounded-2xl max-w-md">
+
+                <!-- FORM TAB -->
+                <button
+                    onclick="switchTab('structured')"
+                    id="tab-struct"
+                    class="flex-1 py-3 rounded-xl bg-white text-blue-600 font-bold text-sm transition"
+                >
+
+                    <i class="fa-solid fa-sliders mr-2"></i>
+                    Form Mudah
+
+                </button>
+
+                <!-- PROMPT TAB -->
+                <button
+                    onclick="switchTab('prompt')"
+                    id="tab-prompt"
+                    class="flex-1 py-3 rounded-xl text-slate-500 font-bold text-sm transition"
+                >
+
+                    <i class="fa-solid fa-pen-nib mr-2"></i>
+                    Prompt AI
+
+                </button>
+
+            </div>
+
+        </div>
+
+        <!-- ========================= -->
+        <!-- FORM MODE -->
+        <!-- ========================= -->
+        <form id="form-structured"
+              action="/user/generate"
+              method="POST"
+              class="p-6 space-y-6">
+
+            <!-- INFO -->
+            <div class="bg-blue-50 border border-blue-100 rounded-2xl p-4">
+
+                <div class="flex gap-3">
+
+                    <div class="w-10 h-10 rounded-xl bg-white text-blue-600 flex items-center justify-center shrink-0">
+
+                        <i class="fa-solid fa-circle-info"></i>
+
+                    </div>
+
+                    <div>
+
+                        <h3 class="font-bold text-slate-900">
+                            Cara Menggunakan
+                        </h3>
+
+                        <p class="mt-1 text-sm text-slate-600 leading-relaxed">
+
+                            Isi topik konten yang ingin dibuat,
+                            pilih platform target, lalu AI akan mencari
+                            rekomendasi konten berdasarkan tren yang relevan.
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- TOPIC -->
+            <div>
+
+                <label class="text-sm font-bold text-slate-700">
+
+                    Topik Konten
+
+                </label>
+
+                <input
+                    type="text"
+                    name="keyword"
+                    placeholder="Contoh: AI untuk mahasiswa, bisnis kopi, skincare remaja"
+                    required
+                    class="mt-2 w-full px-5 py-4 rounded-2xl border border-slate-200 focus:ring-4 focus:ring-blue-100 focus:border-blue-500 outline-none"
+                >
+
+                <p class="mt-2 text-sm text-slate-400">
+
+                    Masukkan ide utama atau tema konten yang ingin dianalisis.
+
+                </p>
+
+            </div>
+
+            <!-- GRID -->
+           <!-- GRID -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+    <!-- PLATFORM -->
+    <div>
+
+        <label class="text-sm font-bold text-slate-700 flex items-center gap-2">
+
+            <i class="fa-solid fa-mobile-screen text-blue-500"></i>
+            Platform Konten
+
+        </label>
+
+        <select
+            name="platform"
+            class="mt-2 w-full px-5 py-4 rounded-2xl border border-slate-200 bg-white focus:ring-4 focus:ring-blue-100 focus:border-blue-500 outline-none"
+        >
+
+            <option value="tiktok">
+                TikTok
+            </option>
+
+            <option value="instagram">
+                Instagram
+            </option>
+
+            <option value="youtube">
+                YouTube
+            </option>
+
+        </select>
+
+        <p class="mt-2 text-sm text-slate-400">
+
+            Pilih platform utama tempat konten akan diposting.
+
+        </p>
+
+    </div>
+<!-- GOAL -->
+<div>
+
+    <label class="text-sm font-bold text-slate-700 flex items-center gap-2">
+
+        <i class="fa-solid fa-bullseye text-orange-500"></i>
+        Tujuan Konten
+
+    </label>
+
+    <select
+        name="goal"
+        class="mt-2 w-full px-5 py-4 rounded-2xl border border-slate-200 bg-white focus:ring-4 focus:ring-blue-100 focus:border-blue-500 outline-none"
+    >
+
+        <!-- EDUKASI -->
+        <option value="edukasi">
+            Edukasi / Tutorial
+        </option>
+
+        <!-- HIBURAN -->
+        <option value="hiburan">
+            Hiburan / Viral
+        </option>
+
+        <!-- TEKNOLOGI -->
+        <option value="teknologi">
+            Teknologi / AI / Gadget
+        </option>
+
+        <!-- FASHION -->
+        <option value="fashion">
+            Fashion / Beauty / OOTD
+        </option>
+
+        <!-- KULINER -->
+        <option value="kuliner">
+            Kuliner / Food Content
+        </option>
+
+        <!-- LIFESTYLE -->
+        <option value="lifestyle">
+            Lifestyle / Daily Life
+        </option>
+
+        <!-- BISNIS -->
+        <option value="bisnis">
+            Bisnis / Marketing / Branding
+        </option>
+
+        <!-- PROMOSI -->
+        <option value="promosi">
+            Promosi Produk / Bisnis
+        </option>
+
+        <!-- BRANDING -->
+        <option value="branding">
+            Personal Branding
+        </option>
+
+        <!-- SOFT SELLING -->
+        <option value="soft selling">
+            Soft Selling
+        </option>
+
+        <!-- HARD SELLING -->
+        <option value="hard selling">
+            Hard Selling
+        </option>
+
+    </select>
+
+    <p class="mt-2 text-sm text-slate-400">
+
+        AI akan menyesuaikan hook, caption, hashtag, storytelling,
+        dan strategi konten berdasarkan tujuan yang dipilih.
+
+    </p>
+
+</div>
+<!-- CATEGORY -->
+<div>
+
+    <label class="text-sm font-bold text-slate-700 flex items-center gap-2">
+
+        <i class="fa-solid fa-layer-group text-emerald-500"></i>
+        Kategori Konten
+
+    </label>
+
+    <select
+        name="category"
+        class="mt-2 w-full px-5 py-4 rounded-2xl border border-slate-200 bg-white focus:ring-4 focus:ring-blue-100 focus:border-blue-500 outline-none"
+    >
+
+        <option value="Teknologi & Gadget">
+            Teknologi & Gadget
+        </option>
+
+        <option value="Hiburan & Komedi">
+            Hiburan & Komedi
+        </option>
+
+        <option value="Edukasi & Tutorial">
+            Edukasi & Tutorial
+        </option>
+
+        <option value="Fashion & Beauty">
+            Fashion & Beauty
+        </option>
+
+        <option value="Kuliner / Food & Beverage">
+            Kuliner / Food & Beverage
+        </option>
+
+        <option value="Travel & Lifestyle">
+            Travel & Lifestyle
+        </option>
+
+    </select>
+
+    <p class="mt-2 text-sm text-slate-400">
+
+        Digunakan AI untuk menentukan niche dan rekomendasi strategi konten.
+
+    </p>
+
+</div>
+
+            <!-- EXAMPLE -->
+            <div class="bg-slate-50 border rounded-2xl p-5">
+
+                <h3 class="font-bold text-slate-800 mb-3">
+
+                    Contoh Topik
+
+                </h3>
+
+                <div class="flex flex-wrap gap-2">
+
+                    <span class="px-3 py-2 rounded-xl bg-white border text-sm text-slate-600">
+                        AI untuk mahasiswa
+                    </span>
+
+                    <span class="px-3 py-2 rounded-xl bg-white border text-sm text-slate-600">
+                        Konten coffee shop
+                    </span>
+
+                    <span class="px-3 py-2 rounded-xl bg-white border text-sm text-slate-600">
+                        Tutorial coding Python
+                    </span>
+
+                    <span class="px-3 py-2 rounded-xl bg-white border text-sm text-slate-600">
+                        Outfit kampus
+                    </span>
+
+                    <span class="px-3 py-2 rounded-xl bg-white border text-sm text-slate-600">
+                        Review gadget murah
+                    </span>
+
+                </div>
+
+            </div>
+
+            <!-- BUTTON -->
+            <button
+                type="submit"
+                class="w-full bg-slate-900 hover:bg-blue-600 text-white py-4 rounded-2xl font-bold transition duration-300"
+            >
+
+                <i class="fa-solid fa-sparkles mr-2"></i>
+
+                Generate Rekomendasi AI
+
+            </button>
+
+        </form>
+
+        <!-- ========================= -->
+        <!-- PROMPT MODE -->
+        <!-- ========================= -->
+        <form id="form-prompt"
+              action="/user/generate"
+              method="POST"
+              class="hidden p-6 space-y-6">
+
+            <!-- INFO -->
+            <div class="bg-indigo-50 border border-indigo-100 rounded-2xl p-4">
+
+                <div class="flex gap-3">
+
+                    <div class="w-10 h-10 rounded-xl bg-white text-indigo-600 flex items-center justify-center shrink-0">
+
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+
+                    </div>
+
+                    <div>
+
+                        <h3 class="font-bold text-slate-900">
+                            Prompt AI Bebas
+                        </h3>
+
+                        <p class="mt-1 text-sm text-slate-600 leading-relaxed">
+
+                            Tulis kebutuhan kontenmu secara natural.
+                            AI akan otomatis mendeteksi platform,
+                            kategori, dan strategi konten yang cocok.
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- TEXTAREA -->
+            <div>
+
+                <textarea
+                    name="user_prompt"
+                    rows="7"
+                    placeholder="Contoh:
+Saya ingin membuat konten TikTok tentang AI untuk mahasiswa agar mudah viral dan menarik ditonton."
+                    class="w-full px-5 py-4 rounded-2xl border border-slate-200 focus:ring-4 focus:ring-indigo-100 focus:border-indigo-500 outline-none resize-none"
+                ></textarea>
+
+            </div>
+
+            <!-- BUTTON -->
+            <button
+                type="submit"
+                class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-4 rounded-2xl font-bold transition duration-300"
+            >
+
+                <i class="fa-solid fa-brain mr-2"></i>
+
+                Analisis dengan AI
+
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+<!-- ========================= -->
+<!-- SCRIPT -->
+<!-- ========================= -->
+<script>
+
+function switchTab(tab){
+
+    const structForm = document.getElementById('form-structured');
+    const promptForm = document.getElementById('form-prompt');
+
+    const structBtn = document.getElementById('tab-struct');
+    const promptBtn = document.getElementById('tab-prompt');
+
+    if(tab === 'structured'){
+
+        structForm.classList.remove('hidden');
+        promptForm.classList.add('hidden');
+
+        structBtn.classList.add('bg-white','text-blue-600','shadow-sm');
+        promptBtn.classList.remove('bg-white','text-indigo-600','shadow-sm');
+
+        promptBtn.classList.add('text-slate-500');
+
+    }else{
+
+        structForm.classList.add('hidden');
+        promptForm.classList.remove('hidden');
+
+        promptBtn.classList.add('bg-white','text-indigo-600','shadow-sm');
+        structBtn.classList.remove('bg-white','text-blue-600','shadow-sm');
+
+        structBtn.classList.add('text-slate-500');
+
+    }
+
+}
+
+</script>
+<!-- ========================= -->
+<!-- LOADING OVERLAY -->
+<!-- ========================= -->
+<!-- ========================= -->
+<!-- LOADING OVERLAY -->
+<!-- ========================= -->
+<div id="loading-overlay"
+     class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-4 sm:p-6">
+
+    <div class="w-full max-w-sm sm:max-w-md bg-white rounded-[2rem] sm:rounded-[2.5rem]
+                px-6 sm:px-10 py-7 sm:py-8
+                shadow-2xl text-center relative overflow-hidden">
+
+        <!-- TOP GLOW -->
+        <div class="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-blue-400 via-cyan-300 to-indigo-400"></div>
+
+        <!-- SPINNER -->
+        <div class="relative w-20 h-20 sm:w-24 sm:h-24 mx-auto mb-6">
+
+            <!-- OUTER -->
+            <div class="absolute inset-0 rounded-full border-[5px] border-blue-100"></div>
+
+            <!-- SPIN -->
+            <div class="absolute inset-0 rounded-full border-[5px]
+                        border-blue-600 border-t-transparent
+                        animate-spin">
+            </div>
+
+            <!-- CENTER -->
+            <div class="absolute inset-3 sm:inset-4 rounded-full bg-blue-50
+                        flex items-center justify-center shadow-inner">
+
+                <i class="fa-solid fa-sparkles
+                          text-blue-600 text-xl sm:text-2xl
+                          animate-pulse">
+                </i>
+
+            </div>
+
+        </div>
+
+        <!-- TITLE -->
+        <h3 class="text-xl sm:text-2xl font-black text-slate-900 leading-tight">
+
+            AI Sedang Menganalisis
+
+        </h3>
+
+        <!-- DESC -->
+        <p class="mt-3 text-sm sm:text-[15px] text-slate-500 leading-relaxed px-2">
+
+            Sistem sedang mencari tren,
+            menghitung similarity,
+            dan membuat rekomendasi konten terbaik...
+
+        </p>
+
+        <!-- LOADING BAR -->
+        <div class="mt-6">
+
+            <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+
+                <div class="h-full w-[65%]
+                            bg-gradient-to-r from-blue-500 to-indigo-500
+                            rounded-full animate-pulse">
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- DOTS -->
+        <div class="flex justify-center gap-2 mt-6">
+
+            <span class="w-2.5 h-2.5 rounded-full bg-blue-500 animate-bounce"></span>
+
+            <span class="w-2.5 h-2.5 rounded-full bg-blue-500 animate-bounce"
+                  style="animation-delay:0.15s"></span>
+
+            <span class="w-2.5 h-2.5 rounded-full bg-blue-500 animate-bounce"
+                  style="animation-delay:0.3s"></span>
+
+        </div>
+
+        <!-- STATUS -->
+        <div class="mt-6 inline-flex items-center gap-2
+                    px-4 py-2 rounded-full
+                    bg-blue-50 border border-blue-100">
+
+            <span class="w-2 h-2 rounded-full bg-blue-500 animate-ping"></span>
+
+            <span class="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-blue-600">
+
+                AI Engine Running
+
+            </span>
+
+        </div>
+
+    </div>
+
+</div>
+<script>
+
+function switchTab(tab){
+
+    const structForm = document.getElementById('form-structured');
+    const promptForm = document.getElementById('form-prompt');
+
+    const structBtn = document.getElementById('tab-struct');
+    const promptBtn = document.getElementById('tab-prompt');
+
+    if(tab === 'structured'){
+
+        structForm.classList.remove('hidden');
+        promptForm.classList.add('hidden');
+
+        structBtn.classList.add('bg-white','text-blue-600','shadow-sm');
+        promptBtn.classList.remove('bg-white','text-indigo-600','shadow-sm');
+
+        promptBtn.classList.add('text-slate-500');
+
+    }else{
+
+        structForm.classList.add('hidden');
+        promptForm.classList.remove('hidden');
+
+        promptBtn.classList.add('bg-white','text-indigo-600','shadow-sm');
+        structBtn.classList.remove('bg-white','text-blue-600','shadow-sm');
+
+        structBtn.classList.add('text-slate-500');
+
+    }
+
+}
+
+/* ========================= */
+/* LOADING SUBMIT */
+/* ========================= */
+
+const forms = document.querySelectorAll('form');
+
+forms.forEach(form => {
+
+    form.addEventListener('submit', function(){
+
+        const overlay = document.getElementById('loading-overlay');
+
+        overlay.classList.remove('hidden');
+
+        const buttons = form.querySelectorAll('button[type="submit"]');
+
+        buttons.forEach(btn => {
+
+            btn.disabled = true;
+
+            btn.classList.add('opacity-70','cursor-not-allowed');
+
+        });
+
+    });
+
+});
+
+</script>
+{% endblock %}

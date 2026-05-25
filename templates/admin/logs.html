@@ -1,0 +1,110 @@
+{% extends 'admin/layout.html' %}
+
+{% block title %}System Logs | Admin TrendReco{% endblock %}
+{% block page_title %}Activity Monitoring{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto space-y-8 animate-in fade-in duration-500">
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-sm flex items-center gap-5">
+            <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center">
+                <i class="fa-solid fa-terminal text-lg"></i>
+            </div>
+            <div>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total Events</p>
+                <p class="text-xl font-black text-slate-900">{{ "{:,}".format(total_events) }}</p>
+            </div>
+        </div>
+        <div class="bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-sm flex items-center gap-5">
+            <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center">
+                <i class="fa-solid fa-circle-check text-lg"></i>
+            </div>
+            <div>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Success Rate</p>
+                <p class="text-xl font-black text-slate-900">{{ success_rate }}%</p>
+            </div>
+        </div>
+        <div class="bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-sm flex items-center gap-5">
+            <div class="w-12 h-12 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center">
+                <i class="fa-solid fa-triangle-exclamation text-lg"></i>
+            </div>
+            <div>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">System Alerts</p>
+                <p class="text-xl font-black text-slate-900">{{ alerts }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-slate-900 rounded-[3rem] shadow-2xl overflow-hidden border border-slate-800">
+        <div class="px-8 py-5 bg-slate-800/50 border-b border-slate-700 flex justify-between items-center">
+            <div class="flex gap-2">
+                <div class="w-3 h-3 rounded-full bg-red-500/50"></div>
+                <div class="w-3 h-3 rounded-full bg-amber-500/50"></div>
+                <div class="w-3 h-3 rounded-full bg-emerald-500/50"></div>
+            </div>
+            <span class="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">Live System Feed</span>
+            <form action="/admin/logs/clear" method="POST">
+                <button type="submit" class="text-[10px] font-black text-blue-400 hover:text-white transition-colors uppercase tracking-widest">Clear Logs</button>
+            </form>
+        </div>
+
+        <div class="p-8 h-[600px] overflow-y-auto space-y-6 font-mono custom-scrollbar">
+            
+            {% for log in logs %}
+            <div class="flex gap-6 group hover:bg-white/5 p-2 rounded-xl transition-colors">
+                <span class="text-slate-600 text-[11px] font-bold mt-1 shrink-0">
+                    {{ log.created_at.strftime('%H:%M:%S') }}
+                </span>
+                
+                <div class="flex-1">
+                    <div class="flex items-center gap-3">
+                        {% if log.status == 'Success' %}
+                            <span class="px-2 py-0.5 bg-emerald-500/10 text-emerald-500 text-[9px] font-black rounded uppercase border border-emerald-500/20">Success</span>
+                        {% elif log.status == 'Warning' %}
+                            <span class="px-2 py-0.5 bg-amber-500/10 text-amber-500 text-[9px] font-black rounded uppercase border border-amber-500/20">Warning</span>
+                        {% else %}
+                            <span class="px-2 py-0.5 bg-blue-500/10 text-blue-500 text-[9px] font-black rounded uppercase border border-blue-500/20">Info</span>
+                        {% endif %}
+
+                        <p class="text-slate-300 text-sm leading-relaxed">
+                            <span class="text-white font-bold">[{{ log.action }}]</span> {{ log.description }}
+                        </p>
+                    </div>
+                    
+                    {% if log.execution_time %}
+                    <p class="text-slate-500 text-[10px] mt-1 italic tracking-tight">
+                        // UID: {{ log.user_id or 'SYSTEM' }} | Exec: {{ log.execution_time }}ms | Date: {{ log.created_at.strftime('%d %b %Y') }}
+                    </p>
+                    {% endif %}
+                </div>
+            </div>
+            {% else %}
+            <div class="h-full flex flex-col items-center justify-center text-slate-600">
+                <i class="fa-solid fa-ghost text-4xl mb-4 opacity-20"></i>
+                <p class="text-xs font-black uppercase tracking-widest">No logs recorded yet</p>
+            </div>
+            {% endfor %}
+
+        </div>
+    </div>
+
+    <div class="flex justify-center">
+        <button onclick="window.print()" class="flex items-center gap-3 px-10 py-5 bg-white border border-slate-200 text-slate-900 rounded-[2rem] font-black text-xs uppercase tracking-[0.2em] hover:bg-slate-900 hover:text-white transition-all shadow-sm group">
+            <i class="fa-solid fa-file-export group-hover:rotate-12 transition-transform"></i> 
+            Generate System Report
+        </button>
+    </div>
+</div>
+
+<style>
+    /* Styling khusus agar scrollbar terlihat seperti terminal retro */
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { 
+        background: #334155; 
+        border-radius: 10px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #475569; }
+</style>
+{% endblock %}

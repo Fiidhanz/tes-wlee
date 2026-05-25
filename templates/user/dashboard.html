@@ -1,0 +1,393 @@
+{% extends "user/layout.html" %}
+
+{% block content %}
+
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+
+<div class="max-w-7xl mx-auto space-y-8">
+
+    <!-- ========================= -->
+    <!-- HEADER -->
+    <!-- ========================= -->
+    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
+
+        <div>
+
+            <h1 class="text-3xl font-black text-slate-900">
+                Dashboard Ide Konten
+            </h1>
+
+            <p class="text-slate-500 mt-2 leading-relaxed max-w-2xl">
+                Sistem ini membantu mencari ide konten berdasarkan tren media sosial,
+                lalu memberikan rekomendasi strategi, caption, hashtag,
+                dan storyboard secara otomatis.
+            </p>
+
+        </div>
+
+        <a href="/user/generate"
+           class="inline-flex items-center justify-center gap-2 px-6 py-4 rounded-2xl bg-slate-900 hover:bg-blue-600 text-white font-bold transition">
+
+            <i class="fa-solid fa-sparkles"></i>
+
+            Cari Ide Konten
+
+        </a>
+
+    </div>
+
+    <!-- ========================= -->
+    <!-- HERO -->
+    <!-- ========================= -->
+    <div class="bg-white border border-slate-200 rounded-[2rem] p-8 shadow-sm">
+
+        <div class="grid lg:grid-cols-2 gap-10 items-center">
+
+            <!-- LEFT -->
+            <div>
+
+                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-50 text-blue-700 text-sm font-bold mb-5">
+
+                    <i class="fa-solid fa-fire"></i>
+
+                    Tren Media Sosial Aktif
+
+                </div>
+
+                <h2 class="text-4xl font-black text-slate-900 leading-tight">
+
+                    Temukan Ide Konten
+                    yang Sedang Berpotensi Viral
+
+                </h2>
+
+                <p class="mt-5 text-slate-600 leading-relaxed text-lg">
+
+                    Masukkan topik yang ingin dibuat,
+                    lalu sistem akan membantu mencari peluang konten
+                    berdasarkan tren TikTok, Instagram, YouTube,
+                    dan data Google Trends.
+
+                </p>
+
+                <!-- STEP -->
+                <div class="grid sm:grid-cols-3 gap-4 mt-8">
+
+                    <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200">
+
+                        <div class="w-10 h-10 rounded-xl bg-white border flex items-center justify-center mb-3 font-black text-blue-600">
+                            1
+                        </div>
+
+                        <p class="font-bold text-slate-900">
+                            Masukkan Topik
+                        </p>
+
+                        <p class="text-sm text-slate-500 mt-1">
+                            Tulis ide atau niche konten.
+                        </p>
+
+                    </div>
+
+                    <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200">
+
+                        <div class="w-10 h-10 rounded-xl bg-white border flex items-center justify-center mb-3 font-black text-blue-600">
+                            2
+                        </div>
+
+                        <p class="font-bold text-slate-900">
+                            Analisis Tren
+                        </p>
+
+                        <p class="text-sm text-slate-500 mt-1">
+                            Sistem mencari peluang konten.
+                        </p>
+
+                    </div>
+
+                    <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200">
+
+                        <div class="w-10 h-10 rounded-xl bg-white border flex items-center justify-center mb-3 font-black text-blue-600">
+                            3
+                        </div>
+
+                        <p class="font-bold text-slate-900">
+                            Dapatkan Strategi
+                        </p>
+
+                        <p class="text-sm text-slate-500 mt-1">
+                            Caption, hashtag, dan storyboard.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- RIGHT -->
+            <!-- RIGHT -->
+<div class="bg-slate-50 border border-slate-200 rounded-[2rem] p-6">
+
+    <p class="text-sm font-bold text-slate-900 mb-5">
+        Sistem menggunakan data dari:
+    </p>
+
+    <div class="space-y-4">
+
+        <!-- ITEM -->
+        <div class="flex items-center justify-between">
+
+            <div class="flex items-center gap-3">
+
+                <div class="w-11 h-11 rounded-xl bg-black text-white flex items-center justify-center">
+                    <i class="fa-brands fa-tiktok"></i>
+                </div>
+
+                <div>
+                    <p class="font-semibold text-slate-800">
+                        TikTok
+                    </p>
+
+                    <p class="text-sm text-slate-500">
+                        Konten viral & trend video
+                    </p>
+                </div>
+
+            </div>
+
+            <p class="text-sm font-bold text-slate-700">
+                {{ tiktok_total }}
+            </p>
+
+        </div>
+
+        <!-- ITEM -->
+        <div class="flex items-center justify-between">
+
+            <div class="flex items-center gap-3">
+
+                <div class="w-11 h-11 rounded-xl bg-pink-100 text-pink-600 flex items-center justify-center">
+                    <i class="fa-brands fa-instagram"></i>
+                </div>
+
+                <div>
+                    <p class="font-semibold text-slate-800">
+                        Instagram
+                    </p>
+
+                    <p class="text-sm text-slate-500">
+                        Reels & engagement content
+                    </p>
+                </div>
+
+            </div>
+
+            <p class="text-sm font-bold text-slate-700">
+                {{ ig_total }}
+            </p>
+
+        </div>
+
+        <!-- ITEM -->
+        <div class="flex items-center justify-between">
+
+            <div class="flex items-center gap-3">
+
+                <div class="w-11 h-11 rounded-xl bg-red-100 text-red-600 flex items-center justify-center">
+                    <i class="fa-brands fa-youtube"></i>
+                </div>
+
+                <div>
+                    <p class="font-semibold text-slate-800">
+                        YouTube
+                    </p>
+
+                    <p class="text-sm text-slate-500">
+                        Video & pencarian populer
+                    </p>
+                </div>
+
+            </div>
+
+            <p class="text-sm font-bold text-slate-700">
+                {{ yt_total }}
+            </p>
+
+        </div>
+
+        <!-- ITEM -->
+        <div class="flex items-center justify-between">
+
+            <div class="flex items-center gap-3">
+
+                <div class="w-11 h-11 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center">
+                    <i class="fa-brands fa-google"></i>
+                </div>
+
+                <div>
+                    <p class="font-semibold text-slate-800">
+                        Google Trends
+                    </p>
+
+                    <p class="text-sm text-slate-500">
+                        Topik yang sedang naik
+                    </p>
+                </div>
+
+            </div>
+
+            <p class="text-sm font-bold text-slate-700">
+                {{ google_total }}
+            </p>
+
+        </div>
+
+    </div>
+
+    <!-- FOOT -->
+    <div class="mt-6 pt-5 border-t border-slate-200">
+
+        <div class="flex items-center justify-between">
+
+            <div>
+                <p class="text-sm font-semibold text-slate-900">
+                    Total Data Dianalisis
+                </p>
+
+                <p class="text-sm text-slate-500">
+                    Digunakan untuk rekomendasi AI
+                </p>
+            </div>
+
+            <p class="text-2xl font-black text-slate-900">
+                {{ grand_total }}
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ========================= -->
+    <!-- REKOMENDASI -->
+    <!-- ========================= -->
+    <div class="bg-white border border-slate-200 rounded-[2rem] p-8 shadow-sm">
+
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-8">
+
+            <div>
+
+                <h2 class="text-2xl font-black text-slate-900">
+                    Rekomendasi Ide Konten
+                </h2>
+
+                <p class="text-slate-500 mt-1">
+                    Topik yang memiliki peluang bagus berdasarkan tren terbaru.
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="space-y-4">
+
+            {% for rec in recommendations %}
+
+            <div class="border border-slate-200 rounded-2xl p-5 hover:bg-slate-50 transition">
+
+                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
+
+                    <!-- LEFT -->
+                    <div class="flex gap-4">
+
+                        <div class="w-11 h-11 rounded-xl bg-slate-100 flex items-center justify-center font-black text-slate-500 shrink-0">
+
+                            {{ loop.index }}
+
+                        </div>
+
+                        <div>
+
+                            <h3 class="font-black text-slate-900 leading-snug text-lg">
+
+                                {{ rec.content_preview[:80] }}...
+
+                            </h3>
+
+                            <div class="flex flex-wrap gap-2 mt-3">
+
+                                <span class="px-3 py-1 rounded-xl bg-blue-50 text-blue-700 text-xs font-bold">
+
+                                    {{ rec.platform_origin }}
+
+                                </span>
+
+                                <span class="px-3 py-1 rounded-xl bg-emerald-50 text-emerald-700 text-xs font-bold">
+
+                                    Potensi Tinggi
+
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- RIGHT -->
+                    <a href="/user/generate?keyword={{ rec.content_preview }}"
+                       class="inline-flex items-center gap-2 px-4 py-3 rounded-2xl bg-slate-900 hover:bg-blue-600 text-white font-bold transition">
+
+                        Analisis Topik
+
+                        <i class="fa-solid fa-arrow-right"></i>
+
+                    </a>
+
+                </div>
+
+            </div>
+
+            {% else %}
+
+            <div class="py-20 text-center">
+
+                <div class="w-24 h-24 mx-auto rounded-full bg-slate-100 flex items-center justify-center">
+
+                    <i class="fa-solid fa-folder-open text-4xl text-slate-300"></i>
+
+                </div>
+
+                <h3 class="mt-6 text-2xl font-black text-slate-900">
+                    Belum Ada Rekomendasi
+                </h3>
+
+                <p class="mt-2 text-slate-500">
+                    Sistem belum menemukan ide konten terbaru.
+                </p>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</div>
+
+<style>
+body{
+    background:#f8fafc;
+}
+</style>
+
+{% endblock %}

@@ -1,0 +1,104 @@
+{% extends 'admin/layout.html' %}
+{% block title %}Opportunity Index | TrendReco{% endblock %}
+{% block page_title %}Strategic Insights{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto space-y-8">
+    
+    {% if top_trend %}
+    <div id="heroSection" class="bg-slate-900 p-12 rounded-[4rem] text-white relative overflow-hidden shadow-2xl shadow-blue-200">
+        <div class="relative z-10 flex flex-col md:flex-row justify-between items-center gap-10">
+            <div class="max-w-lg">
+                <span class="px-5 py-2 bg-blue-600/30 text-blue-400 text-[10px] font-black rounded-full uppercase tracking-widest border border-blue-500/20 italic">AI Recommendation</span>
+                <h2 class="text-4xl font-black mt-6 tracking-tight leading-tight italic">High Opportunity Gap Detected!</h2>
+                <p class="text-slate-400 mt-4 text-sm font-medium leading-relaxed">
+                    Sistem mendeteksi celah konten optimal pada tren <span class="text-white font-bold">"{{ top_trend.query }}"</span> 
+                    dengan rasio pertumbuhan berbanding kejenuhan sebesar {{ top_trend.oi }}.
+                </p>
+            </div>
+            <div class="w-44 h-44 bg-white/10 rounded-[3rem] backdrop-blur-xl flex flex-col items-center justify-center border border-white/10 shrink-0">
+                <span class="text-5xl font-black italic">{{ top_trend.oi }}</span>
+                <span class="text-[9px] font-bold text-blue-400 uppercase tracking-widest mt-2">Index Score</span>
+            </div>
+        </div>
+        <div class="absolute -top-24 -right-24 w-80 h-80 bg-blue-600/20 rounded-full blur-[100px]"></div>
+    </div>
+    {% endif %}
+
+    <div id="filterAlert" class="hidden bg-amber-50 border border-amber-100 p-4 rounded-2xl flex items-center justify-between">
+        <p class="text-[10px] font-bold text-amber-700 uppercase tracking-widest ml-4">
+            <i class="fa-solid fa-filter mr-2"></i> Filtering by Similarity Threshold: <span id="activeThreshold">0</span>%
+        </p>
+        <a href="{{ url_for('similarity_page') }}" class="text-[9px] font-black bg-amber-200 px-3 py-1 rounded-lg text-amber-800 uppercase">Change</a>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="opportunityGrid">
+        {% for res in results %}
+        <div class="opportunity-card bg-white p-8 rounded-[3rem] border border-slate-100 shadow-sm hover:-translate-y-2 transition-all duration-500 group" 
+             data-similarity="{{ res.max_sim_percent }}">
+            
+            <div class="flex justify-between items-start mb-6">
+                <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                    <i class="fa-solid fa-chart-simple"></i>
+                </div>
+                <span class="text-[10px] font-black text-slate-300 uppercase tracking-widest">OI: {{ res.oi }}</span>
+            </div>
+
+            <h4 class="text-sm font-black text-slate-900 uppercase leading-tight mb-2">{{ res.query }}</h4>
+            <span class="text-[9px] font-extrabold text-blue-500 uppercase tracking-tighter bg-blue-50 px-2 py-0.5 rounded">{{ res.category }}</span>
+            
+            <div class="mt-8 space-y-4">
+                <div class="flex justify-between items-center">
+                    <span class="text-[10px] font-bold text-slate-400 uppercase">Growth</span>
+                    <span class="text-[10px] font-black text-emerald-500">{{ res.growth }}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-[10px] font-bold text-slate-400 uppercase">Content Density</span>
+                    <span class="text-[10px] font-black text-slate-700">{{ res.density }}</span>
+                </div>
+                <div class="pt-4 border-t border-slate-50 flex justify-between items-center">
+                    <span class="text-[9px] font-black text-slate-400 uppercase">Relevance</span>
+                    <span class="text-[9px] font-black text-slate-900">{{ res.max_sim_percent }}%</span>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div id="emptyState" class="hidden py-20 text-center">
+        <i class="fa-solid fa-magnifying-glass-chart text-slate-200 text-6xl mb-4"></i>
+        <p class="text-slate-400 font-medium italic">Tidak ada peluang yang memenuhi batas relevansi (Threshold).</p>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const threshold = parseInt(localStorage.getItem('globalThreshold') || 0);
+        const cards = document.querySelectorAll('.opportunity-card');
+        const alertBox = document.getElementById('filterAlert');
+        const activeThreshText = document.getElementById('activeThreshold');
+        const emptyState = document.getElementById('emptyState');
+        let visibleCount = 0;
+
+        if (threshold > 0) {
+            alertBox.classList.remove('hidden');
+            activeThreshText.innerText = threshold;
+        }
+
+        cards.forEach(card => {
+            const sim = parseInt(card.dataset.similarity);
+            if (sim < threshold) {
+                card.style.display = 'none';
+            } else {
+                card.style.display = 'block';
+                visibleCount++;
+            }
+        });
+
+        if (visibleCount === 0 && cards.length > 0) {
+            emptyState.classList.remove('hidden');
+            document.getElementById('heroSection')?.classList.add('opacity-50');
+        }
+    });
+</script>
+{% endblock %}

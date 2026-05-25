@@ -1,0 +1,194 @@
+{% extends 'admin/layout.html' %}
+{% block title %}Trend Growth | TrendReco{% endblock %}
+{% block page_title %}Growth Metrics{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto space-y-8">
+
+    <!-- SUMMARY -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+        <div class="bg-white p-10 rounded-[3rem] border border-slate-100 shadow-sm relative overflow-hidden group">
+            <div class="relative z-10">
+                <span class="px-4 py-1.5 bg-emerald-50 text-emerald-600 text-[10px] font-black rounded-lg uppercase">
+                    Global Growth
+                </span>
+
+                <h3 class="text-4xl font-black text-slate-900 mt-4 tracking-tighter">
+                    {{ avg_growth }}
+                </h3>
+
+                <p class="text-xs font-bold text-slate-400 mt-2 uppercase tracking-widest">
+                    Average Normalized Growth
+                </p>
+            </div>
+
+            <div class="absolute bottom-0 right-0 p-8 opacity-10 group-hover:scale-125 transition-transform duration-700">
+                <i class="fa-solid fa-chart-line text-8xl text-emerald-600"></i>
+            </div>
+        </div>
+
+        <div class="bg-white p-10 rounded-[3rem] border border-slate-100 shadow-sm relative overflow-hidden group">
+            <div class="relative z-10">
+                <span class="px-4 py-1.5 bg-blue-50 text-blue-600 text-[10px] font-black rounded-lg uppercase">
+                    Database Size
+                </span>
+
+                <h3 class="text-4xl font-black text-slate-900 mt-4 tracking-tighter">
+                    {{ total_data }}
+                </h3>
+
+                <p class="text-xs font-bold text-slate-400 mt-2 uppercase tracking-widest">
+                    Trends Tracked
+                </p>
+            </div>
+
+            <div class="absolute bottom-0 right-0 p-8 opacity-10 group-hover:scale-125 transition-transform duration-700">
+                <i class="fa-solid fa-database text-8xl text-blue-600"></i>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- TABLE -->
+    <div class="bg-white rounded-[3rem] shadow-sm border border-slate-100 overflow-hidden fade-in">
+
+        <div class="p-8 border-b border-slate-50">
+            <h4 class="text-sm font-black text-slate-900 uppercase tracking-widest flex items-center gap-3">
+                <span class="w-2 h-6 bg-emerald-500 rounded-full"></span>
+                Growth Analysis Table
+            </h4>
+        </div>
+
+        <div class="overflow-x-auto">
+
+            <table class="w-full">
+
+                <thead>
+                    <tr class="bg-slate-50/50">
+
+                        <th class="px-8 py-5 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                            Trend Query
+                        </th>
+
+                        <th class="px-8 py-5 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                            Category
+                        </th>
+
+                        <th class="px-8 py-5 text-center text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                            Raw Growth
+                        </th>
+
+                        <th class="px-8 py-5 text-center text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                            Normalized Value
+                        </th>
+
+                        <th class="px-8 py-5 text-right text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                            Status
+                        </th>
+
+                    </tr>
+                </thead>
+
+                <tbody class="divide-y divide-slate-50">
+
+                    {% for trend in trends %}
+
+                    {% set growth = trend.increase_percent or '0' %}
+
+                    <tr class="hover:bg-slate-50/50 transition-all group">
+
+                        <!-- QUERY -->
+                        <td class="px-8 py-6">
+                            <p class="text-sm font-bold text-slate-700">
+                                {{ trend.trend_query }}
+                            </p>
+                        </td>
+
+                        <!-- CATEGORY -->
+                        <td class="px-8 py-6">
+                            <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-tight">
+                                {{ trend.category }}
+                            </span>
+                        </td>
+
+                        <!-- RAW -->
+                        <td class="px-8 py-6 text-center">
+
+                            {% if 'Breakout' in growth %}
+
+                            <div class="inline-flex items-center gap-2 px-3 py-1 bg-amber-50 text-amber-600 rounded-full text-xs font-black">
+                                <i class="fa-solid fa-fire text-[10px]"></i>
+                                Breakout
+                            </div>
+
+                            {% else %}
+
+                            <div class="inline-flex items-center gap-2 px-3 py-1 bg-slate-100 text-slate-700 rounded-full text-xs font-black">
+                                <i class="fa-solid fa-chart-column text-[10px]"></i>
+                                {{ growth }}%
+                            </div>
+
+                            {% endif %}
+
+                        </td>
+
+                        <!-- NORMALIZED -->
+                        <td class="px-8 py-6 text-center">
+
+                            <div class="inline-flex items-center gap-2 px-3 py-1 bg-emerald-50 text-emerald-600 rounded-full text-xs font-black">
+                                <i class="fa-solid fa-arrow-trend-up text-[10px]"></i>
+
+                                {{ "%.2f"|format(trend.normalized_growth or 0) }}
+                            </div>
+
+                        </td>
+
+                        <!-- STATUS -->
+                        <td class="px-8 py-6 text-right">
+
+                            {% if 'Breakout' in growth %}
+
+                            <span class="px-3 py-1 bg-amber-500 text-white text-[9px] font-black rounded-lg animate-pulse shadow-sm">
+                                HOT BREAKOUT
+                            </span>
+
+                            {% elif '+' in growth or (growth|float > 0) %}
+
+                            <span class="px-3 py-1 bg-emerald-100 text-emerald-700 text-[9px] font-black rounded-lg">
+                                UPWARD
+                            </span>
+
+                            {% else %}
+
+                            <span class="px-3 py-1 bg-slate-100 text-slate-400 text-[9px] font-black rounded-lg">
+                                STABLE
+                            </span>
+
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+
+                    {% else %}
+
+                    <tr>
+                        <td colspan="5" class="px-8 py-12 text-center text-slate-400 font-medium italic">
+                            Belum ada data tren yang tersimpan di database.
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}
